@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerador de Contratos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Gerador de Contratos</h1>
+
+    <label>Tipo de contrato:</label>
+    <select id="categoria">
+        <option value="">Selecione</option>
+        <option value="servico">Prestação de Serviços</option>
+        <option value="venda">Compra e Venda</option>
+        <option value="aluguel">Aluguel</option>
+    </select>
+
+    <div id="dadosPartes">
+
+        <div>
+            <h3>Dados do Contratante</h3>
+
+            <label>Nome:</label><br>
+            <input type="text" id="contratanteNome"><br><br>
+
+            <label>CPF:</label><br>
+            <input type="text" id="contratanteCPF"><br><br>
+
+            <label>Estado civil:</label><br>
+            <input type="text" id="contratanteEstadoCivil"><br><br>
+
+            <label>CEP:</label><br>
+            <input type="text" id="contratanteCEP"><br><br>
+
+            <label>Rua:</label><br>
+            <input type="text" id="contratanteRua"><br><br>
+
+            <label>Número:</label><br>
+            <input type="text" id="contratanteNumero"><br><br>
+
+            <label>Bairro:</label><br>
+            <input type="text" id="contratanteBairro"><br><br>
+
+            <label>Cidade:</label><br>
+            <input type="text" id="contratanteCidade"><br><br>
+
+            <label>Estado:</label><br>
+            <input type="text" id="contratanteEstado"><br><br>
+        </div>
+
+        <div>
+            <h3>Dados do Contratado</h3>
+
+            <label>Nome:</label><br>
+            <input type="text" id="contratadoNome"><br><br>
+
+            <label>CPF:</label><br>
+            <input type="text" id="contratadoCPF"><br><br>
+
+            <label>Estado civil:</label><br>
+            <input type="text" id="contratadoEstadoCivil"><br><br>
+
+            <label>CEP:</label><br>
+            <input type="text" id="contratadoCEP"><br><br>
+
+            <label>Rua:</label><br>
+            <input type="text" id="contratadoRua"><br><br>
+
+            <label>Número:</label><br>
+            <input type="text" id="contratadoNumero"><br><br>
+
+            <label>Bairro:</label><br>
+            <input type="text" id="contratadoBairro"><br><br>
+
+            <label>Cidade:</label><br>
+            <input type="text" id="contratadoCidade"><br><br>
+
+            <label>Estado:</label><br>
+            <input type="text" id="contratadoEstado"><br><br>
+        </div>
+
+    </div>
+
+    <label>Objeto do contrato:</label>
+    <textarea id="objeto" placeholder="Ex: Venda de notebook usado, Prestação de serviço de marketing, Aluguel de imóvel..." rows="4"></textarea>
+
+    <hr style="margin:20px 0;">
+
+    <h3>Pagamento</h3>
+
+    <!-- ==========================
+    PAGAMENTO PADRÃO (SERVIÇO / VENDA)
+    ========================== -->
+    <div id="pagamentoPadrao">
+
+        <label>Valor do contrato (R$):</label>
+        <input type="text" id="valorServico"><br><br>
+
+        <label>Forma de pagamento:</label>
+        <select id="tipoPagamento">
+            <option value="">Selecione</option>
+            <option value="avista">À vista</option>
+            <option value="parcelado">Parcelado</option>
+            <option value="entrada">Entrada + parcelas</option>
+        </select><br><br>
+
+        <div id="entradaContainer" style="display:none;">
+            <label>Valor de entrada (R$):</label>
+            <input type="text" id="valorEntrada"><br><br>
+        </div>
+
+        <div id="parcelasContainer" style="display:none;">
+            <label>Número de parcelas:</label>
+            <input type="number" id="numeroParcelas"><br><br>
+        </div>
+
+        <div id="resumoPagamento" style="margin-top:10px; font-weight:600;"></div>
+
+        <label>Meio de pagamento:</label>
+        <select id="meioPagamento">
+            <option value="">Selecione</option>
+            <option value="PIX">PIX</option>
+            <option value="Dinheiro">Dinheiro</option>
+            <option value="Cheque">Cheque</option>
+            <option value="Boleto">Boleto</option>
+            <option value="Transferência">Transferência</option>
+        </select><br><br>
+
+    </div>
+
+    <!-- ==========================
+    ALUGUEL (ESPECÍFICO)
+    ========================== -->
+    <div id="aluguelContainer" style="display:none;">
+
+        <label>Valor do aluguel mensal (R$):</label>
+        <input type="text" id="valorAluguel"><br><br>
+
+        <label>Tipo de garantia:</label>
+        <select id="tipoGarantia">
+            <option value="">Selecione</option>
+            <option value="caucao">Caução (depósito)</option>
+            <option value="fiador">Fiador</option>
+            <option value="seguro">Seguro-fiança</option>
+            <option value="nenhuma">Sem garantia</option>
+        </select><br><br>
+
+        <!-- CAUÇÃO -->
+        <div id="caucaoContainer" style="display:none;">
+            <label>Quantidade de meses (máx. 3):</label>
+            <input type="number" id="mesesCaucao" min="1" max="3">
+        </div>
+
+        <!-- FIADOR -->
+        <div id="fiadorContainer" style="display:none;">
+            <label>Nome do fiador:</label>
+            <input type="text" id="nomeFiador"><br><br>
+            <label>CPF do fiador:</label>
+            <input type="text" id="cpfFiador"><br><br>
+        </div>
+
+        <!-- SEGURO -->
+        <div id="seguroContainer" style="display:none;">
+            <label>Seguradora:</label>
+            <input type="text" id="seguradora"><br><br>
+        </div>
+
+    </div>
+
+
+        <hr style="margin:20px 0;">
+
+        <h3>Prazo do Contrato</h3>
+
+        <div id="prazoContainer">
+
+            <div id="campoDataInicio">
+                <label>Data de início:</label>
+                <input type="date" id="dataInicio"><br><br>
+            </div>
+
+            <div id="campoDataFim">
+                <label id="labelDataFim">Data de término:</label>
+                <input type="date" id="dataFim"><br><br>
+            </div>
+
+        </div>
+
+        <button onclick="gerarContrato()">Gerar Contrato</button>
+
+        <button onclick="preencherTeste()" style="background:#64748b; margin-top:10px;">
+            Preencher dados de teste
+        </button>
+
+        <div id="resultado" class="result hidden"></div>
+        <button onclick="copiarContrato()" style="margin-top:10px; background:#16a34a;">
+            Copiar contrato
+        </button>
+    </div>
+
+<script src="app.js"></script>
+</body>
+</html>
