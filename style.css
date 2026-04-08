@@ -1,16 +1,23 @@
 :root {
     --primary: #2563eb;
     --primary-hover: #1e4ed8;
+    --primary-light: rgba(37, 99, 235, 0.2);
     --background: #f8fafc;
     --card: #ffffff;
     --text: #1e293b;
     --subtext: #64748b;
     --border: #e2e8f0;
     --success-bg: #ecfdf5;
+    --success-text: #16a34a;
+    --error-text: #dc2626;
 }
 
 * {
     box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 body {
@@ -19,9 +26,13 @@ body {
     margin: 0;
     padding: 20px;
     color: var(--text);
+    line-height: 1.5;
 }
 
-/* Container principal */
+    /* ==========================
+    CONTAINER PRINCIPAL
+    ========================== */
+
 .container {
     max-width: 520px;
     margin: 40px auto;
@@ -29,43 +40,121 @@ body {
     padding: 25px;
     border-radius: 12px;
     border: 1px solid var(--border);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s ease;
 }
 
-/* Título */
+.container:focus-within {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+    /* ==========================
+    TÍTULOS
+    ========================== */
+
 h1 {
     text-align: center;
-    margin-bottom: 20px;
-    font-size: 22px;
-    }
+    margin: 0 0 25px 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.5px;
+}
 
-/* Labels */
+h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: var(--text);
+}
+
+    /* ==========================
+    LABELS
+    ========================== */
+
 label {
     font-size: 14px;
+    font-weight: 500;
     color: var(--subtext);
     margin-top: 15px;
     display: block;
 }
 
-/* Inputs */
-select {
+    /* ==========================
+    INPUTS E SELECTS
+    ========================== */
+
+input,
+select,
+textarea {
     width: 100%;
     padding: 12px;
     margin-top: 6px;
+    margin-bottom: 10px;
     border-radius: 8px;
     border: 1px solid var(--border);
     font-size: 15px;
-    background: #fff;
+    font-family: inherit;
     transition: all 0.2s ease;
+    background: #fff;
 }
 
-select:focus {
+input:focus,
+select:focus,
+textarea:focus {
     border-color: var(--primary);
     outline: none;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    box-shadow: 0 0 0 2px var(--primary-light);
 }
 
-/* Botão */
+input::placeholder {
+    color: #cbd5e1;
+}
+
+textarea {
+    resize: vertical;
+    line-height: 1.5;
+}
+
+    /* ==========================
+    SECTIONS DE DADOS (Duas colunas)
+    ========================== */
+
+#dadosPartes {
+    display: flex;
+    gap: 40px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#dadosPartes > div {
+    flex: 1;
+}
+
+#dadosPartes > div:first-child {
+    border-right: 1px solid var(--border);
+    padding-right: 40px;
+}
+
+@media (max-width: 768px) {
+    #dadosPartes {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    #dadosPartes > div:first-child {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding-right: 0;
+        padding-bottom: 20px;
+    }
+}
+
+    /* ==========================
+    BOTÕES
+    ========================== */
+
 button {
     width: 100%;
     padding: 14px;
@@ -78,88 +167,183 @@ button {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
-    }
+}
 
 button:hover {
     background: var(--primary-hover);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
 button:active {
     transform: scale(0.98);
 }
 
-/* Resultado */
+button:disabled {
+    background: var(--subtext);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Botão secundário (Preencher teste) */
+button[style*="background:#64748b"] {
+    background: #64748b !important;
+}
+
+button[style*="background:#64748b"]:hover {
+    background: #475569 !important;
+}
+
+/* Botão sucesso (Copiar) */
+button[style*="background:#16a34a"] {
+    background: var(--success-text) !important;
+}
+
+button[style*="background:#16a34a"]:hover {
+    background: #15803d !important;
+}
+
+    /* ==========================
+    RESULTADO (Contrato gerado)
+    ========================== */
+
 .result {
-    margin-top: 20px;
-    padding: 18px;
+    margin-top: 30px;
+    padding: 20px;
     border-radius: 10px;
     background: var(--success-bg);
-    border: 1px solid var(--border);
+    border: 2px solid var(--border);
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.7;
+    color: var(--text);
+    animation: slideIn 0.3s ease;
 }
 
-/* Ocultar */
-.hidden {
-    display: none;
+.result p {
+    margin: 12px 0;
 }
 
-/* Micro interação (suavidade) */
-.container,
-select,
-button,
-.result {
-    transition: all 0.2s ease;
+.result strong {
+    color: var(--text);
+    font-weight: 600;
 }
 
-input {
-    width: 100%;
-    padding: 12px;
-    margin-top: 6px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    font-size: 15px;
+.result h2 {
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: var(--text);
 }
 
-input:focus {
-    border-color: var(--primary);
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-}
-
-#dadosPartes {
-    display: flex;
-    gap: 40px;
-    margin-top: 20px;
-}
-
-#dadosPartes > div {
-    flex: 1;
-}
-
-@media (max-width: 768px) {
-    #dadosPartes {
-        flex-direction: column;
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
-textarea {
-    width: 100%;
-    padding: 12px;
-    margin-top: 6px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    font-size: 15px;
-    resize: vertical;
+    /* ==========================
+    UTILITÁRIOS
+    ========================== */
+
+.hidden {
+    display: none !important;
 }
 
-textarea:focus {
-    border-color: var(--primary);
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 20px 0;
 }
 
-.result {
-    white-space: normal;
+    /* ==========================
+    DARK MODE (Opcional)
+    ========================== */
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background: #0f172a;
+        --card: #1e293b;
+        --text: #f1f5f9;
+        --subtext: #cbd5e1;
+        --border: #334155;
+        --success-bg: #164e63;
+    }
+
+    input,
+    select,
+    textarea {
+        background: #1e293b;
+        color: #f1f5f9;
+    }
+
+    input::placeholder {
+        color: #64748b;
+    }
+
+    .result {
+        background: rgba(22, 78, 99, 0.2);
+        border-color: #334155;
+    }
+}
+
+    /* ==========================
+    PRINT (Para imprimir contrato)
+    ========================== */
+
+@media print {
+    body {
+        background: white;
+        padding: 0;
+    }
+
+    .container {
+        box-shadow: none;
+        border: none;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    button,
+    #dadosPartes > div {
+        display: none;
+    }
+
+    .result {
+        border: none;
+        background: white;
+        padding: 0;
+    }
+}
+
+    /* ==========================
+    ACESSIBILIDADE
+    ========================== */
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Focus visible para navegação por teclado */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* Efeito hover do botão de Limpar */
+#btnLimpar:hover {
+    background: #fee2e2 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
 }
