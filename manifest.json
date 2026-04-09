@@ -1,6 +1,6 @@
 {
-    "name": "Vibecoding - Gerador de Contratos",
-    "short_name": "Vibecoding",
+    "name": "Contrato Fácil",
+    "short_name": "Contrato Fácil",
     "description": "Gere contratos simples para serviços, vendas e aluguel",
     "start_url": "/",
     "display": "standalone",
