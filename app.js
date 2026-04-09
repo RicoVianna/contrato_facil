@@ -1,7 +1,11 @@
 // LÓGICA DE ABERTURA DO APP (SPLASH E LOGIN)
 document.addEventListener("DOMContentLoaded", () => {
-    // Verifica se o usuário já fez login antes
+    // ===== MODO DESENVOLVIMENTO - PULAR LOGIN =====
+    // Descomente a linha abaixo para PULAR O LOGIN durante desenvolvimento
+    // localStorage.setItem("vibecoo_usuario", "Usuário Teste");<<<<<< Descomentar
+    
     const usuarioLogado = localStorage.getItem("vibecoo_usuario");
+    
     // Simulando o tempo de carregamento do Splash Screen (2 segundos)
     setTimeout(() => {
         document.getElementById("splash-screen").style.opacity = "0";
@@ -9,8 +13,14 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
             document.getElementById("splash-screen").style.display = "none";
             
-            // Mostrar a tela de Login (sem verificar usuarioLogado por enquanto)
-            document.getElementById("login-screen").style.display = "flex";
+            // SE JÁ FEZ LOGIN, vai direto pro app
+            if (usuarioLogado) {
+                document.getElementById("login-screen").style.display = "none";
+                document.getElementById("container").style.display = "block";
+            } else {
+                // SENÃO, mostra a tela de Login
+                document.getElementById("login-screen").style.display = "flex";
+            }
             
         }, 500); // Tempo da transição de opacidade
     }, 2000); // 2000 ms = 2 segundos de splash screen
@@ -82,6 +92,54 @@ function validarCPF(cpf) {
     let digito2 = resto < 2 ? 0 : 11 - resto;
     if (digito2 !== parseInt(cpf.charAt(10))) return false;
     
+    return true;
+}
+
+// ==========================
+// VALIDAÇÃO DE CNPJ (Algoritmo Oficial)
+// ==========================
+
+function validarCNPJ(cnpj) {
+    // Remove todos os caracteres não numéricos (pontos, barras, hífens, etc.)
+    cnpj = cnpj.replace(/\D/g, '');
+    
+    // Verifica se o CNPJ tem exatamente 14 dígitos
+    if (cnpj.length !== 14) {
+        return false;
+    }
+    
+    // Rejeita CNPJs com todos os dígitos iguais (ex: 11111111111111)
+    if (/^(\d)\1+$/.test(cnpj)) {
+        return false;
+    }
+    
+    // Pesos para o cálculo dos dígitos verificadores
+    const pesos1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    const pesos2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    
+    // Função auxiliar para calcular o dígito verificador
+    function calcularDigito(cnpj, pesos) {
+        let soma = 0;
+        for (let i = 0; i < pesos.length; i++) {
+            soma += parseInt(cnpj[i]) * pesos[i];
+        }
+        const resto = soma % 11;
+        return resto < 2 ? 0 : 11 - resto;
+    }
+    
+    // Calcula o primeiro dígito verificador
+    const digito1 = calcularDigito(cnpj.substring(0, 12), pesos1);
+    if (digito1 !== parseInt(cnpj[12])) {
+        return false;
+    }
+    
+    // Calcula o segundo dígito verificador
+    const digito2 = calcularDigito(cnpj.substring(0, 13), pesos2);
+    if (digito2 !== parseInt(cnpj[13])) {
+        return false;
+    }
+    
+    // Se passou por todas as validações, o CNPJ é válido
     return true;
 }
 
@@ -477,6 +535,62 @@ function calcularDatasParcelas(dataInicial, quantidade) {
     return datas;
 }
 
+
+// Função para gerar CPF válido
+function gerarCPFValido() {
+    let cpf = [];
+    for (let i = 0; i < 9; i++) {
+        cpf.push(Math.floor(Math.random() * 10));
+    }
+
+    let soma = 0;
+    for (let i = 0; i < 9; i++) {
+        soma += cpf[i] * (10 - i);
+    }
+    let resto = soma % 11;
+    let digito1 = resto < 2 ? 0 : 11 - resto;
+    cpf.push(digito1);
+
+    soma = 0;
+    for (let i = 0; i < 10; i++) {
+        soma += cpf[i] * (11 - i);
+    }
+    resto = soma % 11;
+    let digito2 = resto < 2 ? 0 : 11 - resto;
+    cpf.push(digito2);
+
+    return cpf.slice(0, 3).join('') + '.' + cpf.slice(3, 6).join('') + '.' + cpf.slice(6, 9).join('') + '-' + cpf.slice(9, 11).join('');
+}
+
+// Função para gerar CNPJ válido
+function gerarCNPJValido() {
+    let cnpj = [];
+    for (let i = 0; i < 12; i++) {
+        cnpj.push(Math.floor(Math.random() * 10));
+    }
+
+    let pesos1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    let soma = 0;
+    for (let i = 0; i < 12; i++) {
+        soma += cnpj[i] * pesos1[i];
+    }
+    let resto = soma % 11;
+    let digito1 = resto < 2 ? 0 : 11 - resto;
+    cnpj.push(digito1);
+
+    let pesos2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    soma = 0;
+    for (let i = 0; i < 13; i++) {
+        soma += cnpj[i] * pesos2[i];
+    }
+    resto = soma % 11;
+    let digito2 = resto < 2 ? 0 : 11 - resto;
+    cnpj.push(digito2);
+
+    return cnpj.slice(0, 2).join('') + '.' + cnpj.slice(2, 5).join('') + '.' + cnpj.slice(5, 8).join('') + '/' + cnpj.slice(8, 12).join('') + '-' + cnpj.slice(12, 14).join('');
+}
+
+
 // ==========================
 // PREENCHIMENTO DE TESTE
 // ==========================
@@ -494,7 +608,7 @@ function preencherTeste() {
     document.getElementById("contratanteNome").value = "João da Silva";
     const cCpf = document.getElementById("contratanteCPF");
     if (cCpf) { 
-        cCpf.value = "12345678909"; 
+        cCpf.value = gerarCPFValido(); 
         cCpf.dispatchEvent(new Event("input")); 
     }
     document.getElementById("contratanteEstadoCivil").value = "Solteiro(a)";
@@ -509,7 +623,7 @@ function preencherTeste() {
     document.getElementById("contratadoNome").value = "Maria Oliveira";
     const dCpf = document.getElementById("contratadoCPF");
     if (dCpf) { 
-        dCpf.value = "01234567890"; 
+        dCpf.value = gerarCPFValido(); 
         dCpf.dispatchEvent(new Event("input")); 
     }
     document.getElementById("contratadoEstadoCivil").value = "Casado(a)";
@@ -575,17 +689,35 @@ function gerarContrato() {
         termo2Exibicao = "Locador";
     }
     
-    const cpfContratante = document.getElementById("contratanteCPF")?.value || "";
-    const cpfContratado = document.getElementById("contratadoCPF")?.value || "";
-    
+const cpfContratante = document.getElementById("contratanteCPF")?.value || "";
+const cpfContratado = document.getElementById("contratadoCPF")?.value || "";
+const tipoContratante = document.getElementById("contratanteCPF")?.dataset.tipo || "cpf";
+const tipoContratado = document.getElementById("contratadoCPF")?.dataset.tipo || "cpf";
+
+// Valida CPF ou CNPJ dependendo do tipo
+if (tipoContratante === "cnpj") {
+    if (!validarCNPJ(cpfContratante)) { 
+        alert(`CNPJ do ${termo1Exibicao} é inválido! Verifique a digitação.`); 
+        return; 
+    }
+} else {
     if (!validarCPF(cpfContratante)) { 
         alert(`CPF do ${termo1Exibicao} é inválido! Verifique a digitação.`); 
         return; 
     }
+}
+
+if (tipoContratado === "cnpj") {
+    if (!validarCNPJ(cpfContratado)) { 
+        alert(`CNPJ do ${termo2Exibicao} é inválido! Verifique a digitação.`); 
+        return; 
+    }
+} else {
     if (!validarCPF(cpfContratado)) { 
         alert(`CPF do ${termo2Exibicao} é inválido! Verifique a digitação.`); 
         return; 
     }
+}
 
     const dataInicio = document.getElementById("dataInicio")?.value || "";
     const dataFim = document.getElementById("dataFim")?.value || "";
@@ -984,46 +1116,71 @@ function enviarWhatsApp() {
 
 // --- FUNÇÕES DO TOGGLE SWITCH (CPF/CNPJ) ---
 
-// Alternar Contratante entre CPF e CNPJ
-// --- FUNÇÕES DO TOGGLE SWITCH (CPF/CNPJ) - VERSÃO CORRIGIDA ---
-
 function alternarContratante() {
     const toggle = document.getElementById('toggleContratante').checked;
-    const labelSpan = document.getElementById('labelContratanteCPF');
+    const labelCPF = document.getElementById('labelContratanteCPF');
+    const labelNome = document.getElementById('labelContratanteNome');
     const inputField = document.getElementById('contratanteCPF');
+    const campoNome = document.getElementById('contratanteNome');
+    const campoEstadoCivil = document.getElementById('contratanteEstadoCivil');
+    const containerEstadoCivil = document.getElementById('containerEstadoCivilContratante');
     
     if (toggle) {
-        // Pessoa Jurídica (CNPJ)
-        labelSpan.textContent = 'CNPJ:';
+        // ===== PESSOA JURÍDICA (CNPJ) =====
+        labelCPF.textContent = 'CNPJ:';
+        if (labelNome) labelNome.textContent = 'Razão Social:';
+        if (campoNome) campoNome.placeholder = 'Empresa LTDA';
+        if (containerEstadoCivil) containerEstadoCivil.style.display = 'none';
         inputField.placeholder = '00.000.000/0000-00';
         inputField.value = '';
         inputField.dataset.tipo = 'cnpj';
+        if (campoNome) campoNome.value = '';
+        if (campoEstadoCivil) campoEstadoCivil.value = '';
     } else {
-        // Pessoa Física (CPF)
-        labelSpan.textContent = 'CPF:';
+        // ===== PESSOA FÍSICA (CPF) =====
+        labelCPF.textContent = 'CPF:';
+        if (labelNome) labelNome.textContent = 'Nome:';
+        if (campoNome) campoNome.placeholder = 'João da Silva';
+        if (containerEstadoCivil) containerEstadoCivil.style.display = 'block';
         inputField.placeholder = '000.000.000-00';
         inputField.value = '';
         inputField.dataset.tipo = 'cpf';
+        if (campoNome) campoNome.value = '';
+        if (campoEstadoCivil) campoEstadoCivil.value = '';
     }
 }
 
 function alternarContratado() {
     const toggle = document.getElementById('toggleContratado').checked;
-    const labelSpan = document.getElementById('labelContratadoCPF');
+    const labelCPF = document.getElementById('labelContratadoCPF');
+    const labelNome = document.getElementById('labelContratadoNome');
     const inputField = document.getElementById('contratadoCPF');
+    const campoNome = document.getElementById('contratadoNome');
+    const campoEstadoCivil = document.getElementById('contratadoEstadoCivil');
+    const containerEstadoCivil = document.getElementById('containerEstadoCivilContratado');
     
     if (toggle) {
-        // Pessoa Jurídica (CNPJ)
-        labelSpan.textContent = 'CNPJ:';
+        // ===== PESSOA JURÍDICA (CNPJ) =====
+        labelCPF.textContent = 'CNPJ:';
+        if (labelNome) labelNome.textContent = 'Razão Social:';
+        if (campoNome) campoNome.placeholder = 'Empresa LTDA';
+        if (containerEstadoCivil) containerEstadoCivil.style.display = 'none';
         inputField.placeholder = '00.000.000/0000-00';
         inputField.value = '';
         inputField.dataset.tipo = 'cnpj';
+        if (campoNome) campoNome.value = '';
+        if (campoEstadoCivil) campoEstadoCivil.value = '';
     } else {
-        // Pessoa Física (CPF)
-        labelSpan.textContent = 'CPF:';
+        // ===== PESSOA FÍSICA (CPF) =====
+        labelCPF.textContent = 'CPF:';
+        if (labelNome) labelNome.textContent = 'Nome:';
+        if (campoNome) campoNome.placeholder = 'João da Silva';
+        if (containerEstadoCivil) containerEstadoCivil.style.display = 'block';
         inputField.placeholder = '000.000.000-00';
         inputField.value = '';
         inputField.dataset.tipo = 'cpf';
+        if (campoNome) campoNome.value = '';
+        if (campoEstadoCivil) campoEstadoCivil.value = '';
     }
 }
 

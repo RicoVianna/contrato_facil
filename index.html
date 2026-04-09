@@ -76,15 +76,17 @@
                 <span class="toggle-label">Pessoa Jurídica</span>
             </div>
 
-            <label for="contratanteNome">Nome:</label>
+            <label for="contratanteNome" id="labelContratanteNome">Nome:</label>
             <input type="text" id="contratanteNome" placeholder="Nome completo">
             
             <!-- ESTE LABEL VAI MUDAR ENTRE CPF E CNPJ -->
             <label for="contratanteCPF"><span id="labelContratanteCPF">CPF:</span></label>
             <input type="text" id="contratanteCPF" placeholder="000.000.000-00">
             
-            <label for="contratanteEstadoCivil">Estado civil:</label>
-            <input type="text" id="contratanteEstadoCivil" placeholder="Solteiro(a), Casado(a), etc">
+            <div id="containerEstadoCivilContratante">
+                <label for="contratanteEstadoCivil">Estado civil:</label>
+                <input type="text" id="contratanteEstadoCivil" placeholder="Solteiro(a), Casado(a), etc">
+            </div>
             
             <label for="contratanteCEP">CEP:</label>
             <input type="text" id="contratanteCEP" placeholder="00000-000" maxlength="9">
@@ -118,15 +120,17 @@
                 <span class="toggle-label">Pessoa Jurídica</span>
             </div>
 
-            <label for="contratadoNome">Nome:</label>
+            <label for="contratadoNome" id="labelContratadoNome">Nome:</label>
             <input type="text" id="contratadoNome" placeholder="Nome completo">
             
             <!-- ESTE LABEL VAI MUDAR ENTRE CPF E CNPJ -->
             <label for="contratadoCPF"><span id="labelContratadoCPF">CPF:</span></label>
             <input type="text" id="contratadoCPF" placeholder="000.000.000-00">
             
-            <label for="contratadoEstadoCivil">Estado civil:</label>
-            <input type="text" id="contratadoEstadoCivil" placeholder="Solteiro(a), Casado(a), etc">
+            <div id="containerEstadoCivilContratado">
+                <label for="contratadoEstadoCivil">Estado civil:</label>
+                <input type="text" id="contratadoEstadoCivil" placeholder="Solteiro(a), Casado(a), etc">
+            </div>
             
             <label for="contratadoCEP">CEP:</label>
             <input type="text" id="contratadoCEP" placeholder="00000-000" maxlength="9">
