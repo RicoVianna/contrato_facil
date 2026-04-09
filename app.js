@@ -746,11 +746,22 @@ if (tipoContratado === "cnpj") {
     // Pega o valor das cláusulas adicionais
     const clausulasAdicionais = document.getElementById("clausulasAdicionais")?.value || "";
 
+    // === PASSO 1: DEFINE O TÍTULO DINÂMICO AQUI ===
+    let tituloContrato = "CONTRATO";
+    if (categoria === "servico") {
+        tituloContrato = "CONTRATO DE PRESTAÇÃO DE SERVIÇOS";
+    } else if (categoria === "venda") {
+        tituloContrato = "CONTRATO DE COMPRA E VENDA";
+    } else if (categoria === "aluguel") {
+        tituloContrato = "CONTRATO DE LOCAÇÃO";
+    }
+    // ===============================================
+
     // MONTANDO O CONTRATO (ESTRUTURA CORRIGIDA)
     const estrutura = `
     <div style="font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #333;">
         
-        <h1 style="text-align: center; font-size: 18px; margin-bottom: 30px; text-transform: uppercase;">CONTRATO</h1>
+        <h2 style="text-align: center; font-size: 18px; margin-bottom: 30px; text-transform: uppercase;">${tituloContrato}</h2>
         
         <p><strong>Partes:</strong></p>
         <p><strong>${termo1.toUpperCase()}:</strong> ${cNome}, ${cEst}, inscrito(a) no CPF sob o nº <strong>${cpfContratante}</strong>, residente e domiciliado(a) na rua <strong>${cRua}</strong>, nº <strong>${cNum}</strong>, na cidade de <strong>${cCid}</strong>, estado de <strong>${cUF}</strong>.</p>
