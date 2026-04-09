@@ -2,7 +2,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     // ===== MODO DESENVOLVIMENTO - PULAR LOGIN =====
     // Descomente a linha abaixo para PULAR O LOGIN durante desenvolvimento
-    // localStorage.setItem("vibecoo_usuario", "Usuário Teste");<<<<<< Descomentar
+    //localStorage.setItem("vibecoo_usuario", "Usuário Teste");<<<<<< Descomentar
     
     const usuarioLogado = localStorage.getItem("vibecoo_usuario");
     
