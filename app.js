@@ -1,3 +1,41 @@
+// LÓGICA DE ABERTURA DO APP (SPLASH E LOGIN)
+document.addEventListener("DOMContentLoaded", () => {
+    // Verifica se o usuário já fez login antes
+    const usuarioLogado = localStorage.getItem("vibecoo_usuario");
+    // Simulando o tempo de carregamento do Splash Screen (2 segundos)
+    setTimeout(() => {
+        document.getElementById("splash-screen").style.opacity = "0";
+        
+        setTimeout(() => {
+            document.getElementById("splash-screen").style.display = "none";
+            
+            // Mostrar a tela de Login (sem verificar usuarioLogado por enquanto)
+            document.getElementById("login-screen").style.display = "flex";
+            
+        }, 500); // Tempo da transição de opacidade
+    }, 2000); // 2000 ms = 2 segundos de splash screen
+});
+
+// FUNÇÃO PARA O BOTÃO DE LOGIN
+function entrarNoApp() {
+    const nome = document.getElementById("usuario-nome").value;
+    
+    if (nome.trim() === "") {
+        alert("Por favor, digite seu nome para continuar.");
+        return;
+    }
+    
+    // Salva o nome no celular do usuário (gratuitamente, sem banco de dados!)
+    localStorage.setItem("vibecoo_usuario", nome);
+    
+    // Esconde o login e mostra o app
+    document.getElementById("login-screen").style.display = "none";
+    document.getElementById("container").style.display = "block";
+    
+    // Opcional: Você pode colocar uma mensagem de "Olá, [Nome]" no topo do app depois
+    alert(`Bem-vindo, ${nome}!`);
+}
+
 // ==========================
 // INICIALIZAÇÃO DO APP
 // ==========================
@@ -5,7 +43,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     inicializarMascaras();
     inicializarEventos();
-    carregarDadosLocal(); // <-- Puxa os dados salvos ao abrir o app
+    carregarDadosLocal();
     registrarServiceWorker();
 });
 
@@ -26,7 +64,6 @@ function validarCPF(cpf) {
     
     if (cpf.length !== 11) return false;
     
-    // Verifica se todos os números são iguais (ex: 111.111.111-11)
     if (/^(\d)\1+$/.test(cpf)) return false;
     
     let soma = 0;
@@ -53,10 +90,30 @@ function validarCPF(cpf) {
 // ==========================
 
 function inicializarMascaras() {
-    aplicarMascaraCPF(document.getElementById("contratanteCPF"));
-    aplicarMascaraCPF(document.getElementById("contratadoCPF"));
-    aplicarMascaraCPF(document.getElementById("cpfFiador"));
+    // Inicializar CPF/CNPJ com máscara dupla
+    const campoContratanteCPF = document.getElementById("contratanteCPF");
+    const campoContratadoCPF = document.getElementById("contratadoCPF");
+    const campoFiadorCPF = document.getElementById("cpfFiador");
     
+    // Define tipo padrão como CPF
+    if (campoContratanteCPF) campoContratanteCPF.dataset.tipo = 'cpf';
+    if (campoContratadoCPF) campoContratadoCPF.dataset.tipo = 'cpf';
+    if (campoFiadorCPF) campoFiadorCPF.dataset.tipo = 'cpf';
+    
+    // Adiciona listener que responde ao toggle
+    [campoContratanteCPF, campoContratadoCPF, campoFiadorCPF].forEach(campo => {
+        if (!campo) return;
+        campo.addEventListener('input', function(e) {
+            const tipo = this.dataset.tipo || 'cpf';
+            if (tipo === 'cnpj') {
+                this.value = formatarCNPJ(this.value);
+            } else {
+                this.value = formatarCPF(this.value);
+            }
+        });
+    });
+    
+    // Rest das máscaras (CEP, Moeda) continuam igual
     const cepContratante = document.getElementById("contratanteCEP");
     aplicarMascaraCEP(cepContratante);
     buscarEnderecoPorCEP(
@@ -82,17 +139,6 @@ function inicializarMascaras() {
     aplicarMascaraMoeda(document.getElementById("valorEntrada"));
 }
 
-function aplicarMascaraCPF(input) {
-    if (!input) return;
-    input.addEventListener("input", () => {
-        let valor = input.value.replace(/\D/g, "");
-        if (valor.length > 11) valor = valor.slice(0, 11);
-        if (valor.length >= 3) valor = valor.replace(/^(\d{3})/, "$1.");
-        if (valor.length >= 7) valor = valor.replace(/^(\d{3})\.(\d{3})/, "$1.$2.");
-        if (valor.length >= 11) valor = valor.replace(/^(\d{3})\.(\d{3})\.(\d{3})/, "$1.$2.$3-");
-        input.value = valor;
-    });
-}
 
 function aplicarMascaraCEP(input) {
     if (!input) return;
@@ -134,7 +180,7 @@ function buscarEnderecoPorCEP(cepInput, ruaInput, bairroInput, cidadeInput, esta
             if (cidadeInput) cidadeInput.value = data.localidade || "";
             if (estadoInput) estadoInput.value = data.uf || "";
             
-            salvarDadosLocal(); // Salva automaticamente ao puxar o CEP
+            salvarDadosLocal();
         } catch (error) {
             console.error("Erro ao buscar CEP:", error);
         }
@@ -160,11 +206,13 @@ function inicializarEventos() {
         if (el) {
             el.addEventListener("input", atualizarResumoPagamento);
             el.addEventListener("change", atualizarResumoPagamento);
+            if (id === "numeroParcelas" || id === "dataPrimeiroVencimento") {
+                el.addEventListener("input", atualizarDatasParcelasSugeridas);
+                el.addEventListener("change", atualizarDatasParcelasSugeridas);
+            }
         }
     });
-    
-    // --> MÁGICA DO SALVAMENTO AUTOMÁTICO <--
-    // Escuta qualquer mudança em qualquer campo e salva
+
     const todosInputs = document.querySelectorAll('input, select, textarea');
     todosInputs.forEach(input => {
         input.addEventListener('input', salvarDadosLocal);
@@ -187,11 +235,11 @@ function handleMudancaCategoria() {
     if (campoInicio) campoInicio.style.display = "block";
     if (labelFim) labelFim.innerText = "Data de término";
     
-    const btnCopiar = document.getElementById("btnCopiar");
+    const containerBotoes = document.getElementById("containerBotoesAcao");
     const resultado = document.getElementById("resultado");
-    if (btnCopiar) btnCopiar.style.display = "none";
+    if (containerBotoes) containerBotoes.style.display = "none";
     if (resultado) resultado.classList.add("hidden");
-    
+
     if (tipo === "servico") {
         if (labelFim) labelFim.innerText = "Data de término do serviço";
         if (tituloParte1) tituloParte1.innerText = "Dados do Contratante";
@@ -287,8 +335,35 @@ function atualizarResumoPagamento() {
     }
 }
 
+function atualizarDatasParcelasSugeridas() {
+    const dataPrimeira = document.getElementById("dataPrimeiroVencimento")?.value || "";
+    const numeroParcelas = parseInt(document.getElementById("numeroParcelas")?.value) || 0;
+    const resumoDiv = document.getElementById("resumoParcelasDiv");
+    const resumoDatas = document.getElementById("resumoParcelasDatas");
+    
+    if (!dataPrimeira || numeroParcelas <= 0) {
+        if (resumoDiv) resumoDiv.style.display = "none";
+        return;
+    }
+    
+    const datas = calcularDatasParcelas(dataPrimeira, numeroParcelas);
+    
+    if (datas.length > 0) {
+        let html = "<ul style=\"margin: 0; padding-left: 20px;\">";
+        datas.forEach((data, index) => {
+            html += `<li>Parcela ${index + 1}: <strong>${data}</strong></li>`;
+        });
+        html += "</ul>";
+        
+        resumoDatas.innerHTML = html;
+        if (resumoDiv) resumoDiv.style.display = "block";
+    } else {
+        if (resumoDiv) resumoDiv.style.display = "none";
+    }
+}
+
 // ==========================
-// LÓGICA DE LOCALSTORAGE (SALVAR DADOS AUTOMÁTICOS)
+// LÓGICA DE LOCALSTORAGE
 // ==========================
 
 function salvarDadosLocal() {
@@ -316,10 +391,10 @@ function salvarDadosLocal() {
         contratadoCidade: document.getElementById("contratadoCidade")?.value || "",
         contratadoEstado: document.getElementById("contratadoEstado")?.value || "",
         
-        cidadeForo: document.getElementById("cidadeForo")?.value || ""
+        cidadeForo: document.getElementById("cidadeForo")?.value || "",
+        clausulasAdicionais: document.getElementById("clausulasAdicionais")?.value || ""
     };
     
-    // Salva no navegador do usuário
     localStorage.setItem('vibecoding_contrato_dados', JSON.stringify(dados));
 }
 
@@ -359,8 +434,8 @@ function carregarDadosLocal() {
         setVal("contratadoEstado", dados.contratadoEstado);
         
         setVal("cidadeForo", dados.cidadeForo);
+        setVal("clausulasAdicionais", dados.clausulasAdicionais);
         
-        // Dispara a mudança visual se a categoria estiver salva
         if (dados.categoria) {
             const cat = document.getElementById("categoria");
             if (cat) cat.dispatchEvent(new Event("change"));
@@ -464,7 +539,7 @@ function preencherTeste() {
     document.getElementById("dataFim").value = "2026-06-01";
     document.getElementById("cidadeForo").value = "São Paulo/SP";
     
-    salvarDadosLocal(); // Salva automaticamente ao rodar o teste
+    salvarDadosLocal();
     
     setTimeout(() => {
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
@@ -472,7 +547,7 @@ function preencherTeste() {
 }
 
 // ==========================
-// GERAÇÃO DO CONTRATO
+// GERAR CONTRATO (FUNÇÃO PRINCIPAL - CORRIGIDA)
 // ==========================
 
 function gerarContrato() {
@@ -537,119 +612,228 @@ function gerarContrato() {
     const dCid = document.getElementById("contratadoCidade")?.value || "";
     const dUF = document.getElementById("contratadoEstado")?.value || "";
 
-    const estrutura = `
-        <div style="line-height:1.6; font-family:Arial; text-align: justify;">
-        <h2 style="text-align:center; margin-bottom:30px; text-transform: uppercase;">
-        ${categoria === "servico" ? "CONTRATO DE PRESTAÇÃO DE SERVIÇOS" : categoria === "venda" ? "CONTRATO DE COMPRA E VENDA" : "CONTRATO DE LOCAÇÃO"}
-        </h2>
-        
-        <p>Pelo presente instrumento, as partes abaixo qualificadas celebram este contrato, que se regerá pelas seguintes cláusulas e pela legislação aplicável:</p>
+    // Pega o valor das cláusulas adicionais
+    const clausulasAdicionais = document.getElementById("clausulasAdicionais")?.value || "";
 
-        <p><strong>${termo1}:</strong><br>
-        <strong>${cNome}</strong>, inscrito(a) no CPF sob o nº ${cpfContratante}, estado civil: ${cEst}, residente e domiciliado(a) na ${cRua}${cNum ? ", " + cNum : ""} - ${cCid}/${cUF}.</p>
+    // MONTANDO O CONTRATO (ESTRUTURA CORRIGIDA)
+    const estrutura = `
+    <div style="font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #333;">
         
-        <p><strong>${termo2}:</strong><br>
-        <strong>${dNome}</strong>, inscrito(a) no CPF sob o nº ${cpfContratado}, estado civil: ${dEst}, residente e domiciliado(a) na ${dRua}${dNum ? ", " + dNum : ""} - ${dCid}/${dUF}.</p>
+        <h1 style="text-align: center; font-size: 18px; margin-bottom: 30px; text-transform: uppercase;">CONTRATO</h1>
+        
+        <p><strong>Partes:</strong></p>
+        <p><strong>${termo1.toUpperCase()}:</strong> ${cNome}, ${cEst}, inscrito(a) no CPF sob o nº <strong>${cpfContratante}</strong>, residente e domiciliado(a) na rua <strong>${cRua}</strong>, nº <strong>${cNum}</strong>, na cidade de <strong>${cCid}</strong>, estado de <strong>${cUF}</strong>.</p>
+        <p><strong>${termo2.toUpperCase()}:</strong> ${dNome}, ${dEst}, inscrito(a) no CPF sob o nº <strong>${cpfContratado}</strong>, residente e domiciliado(a) na rua <strong>${dRua}</strong>, nº <strong>${dNum}</strong>, na cidade de <strong>${dCid}</strong>, estado de <strong>${dUF}</strong>.</p>
         
         <br><p><strong>CLÁUSULA PRIMEIRA — DO OBJETO</strong></p>
-        <p>O presente contrato tem como objeto ${objeto}, executado e entregue conforme as especificações e padrões de qualidade exigidos para a sua natureza.</p>
+        <p>${objeto}</p>
         
-        <br><p><strong>CLÁUSULA SEGUNDA — DO PREÇO E CONDIÇÕES DE PAGAMENTO</strong></p>
-        ${gerarTextoPagamento()}
-        
-        <br><p><strong>CLÁUSULA TERCEIRA — DO PRAZO E DA EXECUÇÃO</strong></p>
+        <br><p><strong>CLÁUSULA SEGUNDA — DO PRAZO</strong></p>
         ${gerarClausulaPrazo(categoria, dataInicio, dataFim)}
         
-        <br><p><strong>CLÁUSULA QUARTA — DA INADIMPLÊNCIA E DAS PENALIDADES</strong></p>
+        <br><p><strong>CLÁUSULA TERCEIRA — DO VALOR E FORMA DE PAGAMENTO</strong></p>
+        ${gerarClausulaValor(categoria)}
+        
+        <br><p><strong>CLÁUSULA QUARTA — DA INADIMPLÊNCIA</strong></p>
         ${gerarClausulaInadimplencia()}
         
-        ${categoria === "aluguel" ? `<br><p><strong>CLÁUSULA QUINTA — DAS GARANTIAS LOCATÍCIAS</strong></p>${gerarClausulaGarantia()}` : ''}
-        ${categoria === "venda" ? `<br><p><strong>CLÁUSULA QUINTA — DA EVICÇÃO E DOS VÍCIOS REDIBITÓRIOS</strong></p><p>O <strong>${termo2}</strong> responsabiliza-se pela origem e boa procedência do bem objeto deste contrato, respondendo pela evicção de direito e por eventuais vícios ocultos (redibitórios).</p>` : ''}
+        ${categoria === "aluguel" ? `
+        <br><p><strong>CLÁUSULA QUINTA — DA GARANTIA</strong></p>
+        ${gerarClausulaGarantia()}
+        ` : ''}
         
-        <br><p><strong>CLÁUSULA ${categoria === "servico" ? "QUINTA" : "SEXTA"} — DO FORO</strong></p>
+
+
+        ${clausulasAdicionais && clausulasAdicionais.trim() !== "" ? `
+        <br><p><strong>CLÁUSULA QUINTA — CLÁUSULAS ADICIONAIS</strong></p>
+        <p style="text-align: justify; line-height: 1.6;">
+            ${clausulasAdicionais.split('\n').join('<br>')}
+        </p>
+
+        <br><p><strong>CLÁUSULA SEXTA — DO FORO</strong></p>
         <p>As partes elegem o foro da <strong>${foro}</strong> para dirimir quaisquer dúvidas ou litígios oriundos deste contrato, renunciando a qualquer outro, por mais privilegiado que seja.</p>
+        ` : `
+        <br><p><strong>CLÁUSULA QUINTA — DO FORO</strong></p>
+        <p>As partes elegem o foro da <strong>${foro}</strong> para dirimir quaisquer dúvidas ou litígios oriundos deste contrato, renunciando a qualquer outro, por mais privilegiado que seja.</p>
+        `}
 
-        <br><br><p>E, por estarem assim justas e contratadas, as partes assinam o presente instrumento em 02 (duas) vias de igual teor e forma, juntamente com 02 (duas) testemunhas.</p>
+        <br><br>
+        <p>E, por estarem assim justas e contratadas, as partes assinam o presente instrumento em 02 (duas) vias de igual teor e forma, juntamente com 02 (duas) testemunhas.</p>
+        
+        <!-- BLOCO DE ASSINATURAS USANDO TABELA (BLINDADO PARA IMPRESSÃO) -->
+        <table style="width: 100%; margin-top: 50px; border-collapse: collapse; page-break-inside: avoid; border: none;">
+            <tr>
+                <!-- COLUNA ESQUERDA: CONTRATANTE -->
+                <td style="width: 45%; vertical-align: top; text-align: center; border: none; padding: 0;">
+                    <div style="border-bottom: 1px solid #000; width: 100%; margin-bottom: 5px;"></div>
+                    <strong>Contratante</strong><br>
+                    <span style="font-size: 14px;">${document.getElementById("nomeContratante")?.value || ""}</span>
+                </td>
+                
+                <!-- ESPAÇO CENTRAL -->
+                <td style="width: 10%; border: none; padding: 0;"></td>
+                
+                <!-- COLUNA DIREITA: CONTRATADO -->
+                <td style="width: 45%; vertical-align: top; text-align: center; border: none; padding: 0;">
+                    <div style="border-bottom: 1px solid #000; width: 100%; margin-bottom: 5px;"></div>
+                    <strong>Contratado</strong><br>
+                    <span style="font-size: 14px;">${document.getElementById("nomeContratado")?.value || ""}</span>
+                </td>
+            </tr>
+            
+            <!-- LINHA INVISÍVEL PARA DAR ESPAÇO ENTRE AS ASSINATURAS -->
+            <tr>
+                <td colspan="3" style="height: 60px; border: none; padding: 0;"></td>
+            </tr>
+            
+            <tr>
+                <!-- COLUNA ESQUERDA: TESTEMUNHA 1 -->
+                <td style="width: 45%; vertical-align: top; text-align: center; border: none; padding: 0;">
+                    <div style="border-bottom: 1px solid #000; width: 100%; margin-bottom: 5px;"></div>
+                    <strong>TESTEMUNHA 1</strong>
+                    <div style="text-align: left; line-height: 1.5; font-size: 14px; margin-top: 10px;">
+                        Nome: <br>
+                        CPF: 
+                    </div>
+                </td>
+                
+                <!-- ESPAÇO CENTRAL -->
+                <td style="width: 10%; border: none; padding: 0;"></td>
+                
+                <!-- COLUNA DIREITA: TESTEMUNHA 2 -->
+                <td style="width: 45%; vertical-align: top; text-align: center; border: none; padding: 0;">
+                    <div style="border-bottom: 1px solid #000; width: 100%; margin-bottom: 5px;"></div>
+                    <strong>TESTEMUNHA 2</strong>
+                    <div style="text-align: left; line-height: 1.5; font-size: 14px; margin-top: 10px;">
+                        Nome: <br>
+                        CPF: 
+                    </div>
+                </td>
+            </tr>
+        </table>
 
-        <br><br><br>
-        <div style="display:flex; justify-content:space-between; margin-top:50px; text-align:center;">
-            <div style="width:45%; border-top:1px solid #000; padding-top:5px;"><strong>${cNome}</strong><br>${termo1Exibicao}</div>
-            <div style="width:45%; border-top:1px solid #000; padding-top:5px;"><strong>${dNome}</strong><br>${termo2Exibicao}</div>
-        </div>
-        <div style="display:flex; justify-content:space-between; margin-top:80px; text-align:center;">
-            <div style="width:45%; border-top:1px solid #000; padding-top:5px;">Testemunha 1<br>CPF:</div>
-            <div style="width:45%; border-top:1px solid #000; padding-top:5px;">Testemunha 2<br>CPF:</div>
-        </div>
-        </div>
-    `;
-    
-    const resultadoEl = document.getElementById("resultado");
-    if (resultadoEl) {
-        resultadoEl.classList.remove("hidden");
-        resultadoEl.innerHTML = estrutura;
+    </div>`;
+    // FIM DA TEMPLATE STRING
+
+    // Exibe o contrato
+    const resultado = document.getElementById("resultado");
+    if (resultado) {
+        resultado.innerHTML = estrutura;
+        resultado.classList.remove("hidden");
     }
-    
-    const btnCopiar = document.getElementById("btnCopiar");
-    if (btnCopiar) btnCopiar.style.display = "block";
-    
-    salvarDadosLocal(); // Salva os dados finais ao gerar contrato
-    
+
+    // Mostra os botões de ação com ESPAÇAMENTO E RESPONSIVIDADE
+    const containerBotoes = document.getElementById("containerBotoesAcao");
+    if (containerBotoes) {
+        containerBotoes.style.display = "flex";
+        containerBotoes.style.gap = "15px";
+        containerBotoes.style.flexWrap = "wrap";
+        containerBotoes.style.justifyContent = "center";
+        containerBotoes.style.marginTop = "30px";
+    }
+
+    // Scroll para o contrato
     setTimeout(() => {
-        if (resultadoEl) resultadoEl.scrollIntoView({ behavior: "smooth" });
+        window.scrollTo({ top: resultado.offsetTop - 50, behavior: 'smooth' });
     }, 100);
 }
 
-function gerarTextoPagamento() {
+// NOVA FUNÇÃO: Gerar Cláusula de Valor
+function gerarClausulaValor(categoria) {
+    const valor = document.getElementById("valorServico")?.value || "";
+    const tipo = document.getElementById("tipoPagamento")?.value || "";
+    const parcelas = document.getElementById("numeroParcelas")?.value || "";
+    const entrada = document.getElementById("valorEntrada")?.value || "";
+    const meio = document.getElementById("meioPagamento")?.value || "não especificado";
+
+    if (!valor) {
+        return `<p>O valor e forma de pagamento serão acordados entre as partes.</p>`;
+    }
+
+    let clausulaValor = `<p>O presente contrato é celebrado em um valor de <strong>${valor}</strong>.</p>`;
+
+    if (tipo === "avista") {
+        clausulaValor += `<p>O pagamento deverá ser realizado à vista, em uma única parcela, via <strong>${meio}</strong>.</p>`;
+    } else if (tipo === "parcelado") {
+        if (parcelas > 0) {
+            const valorNum = parseFloat(valor.replace(/\D/g, "").replace(",", ".")) / 100 || 0;
+            const parcelaStr = (valorNum / parcelas).toFixed(2).replace(".", ",");
+            clausulaValor += `<p>O pagamento deverá ser realizado em <strong>${parcelas} parcelas iguais de R$ ${parcelaStr}</strong> via <strong>${meio}</strong>. <span style="font-weight: bold; color: #16a34a;">(Total: ${valor})</span></p>`;
+        } else {
+            clausulaValor += `<p>O pagamento deverá ser realizado parcelado, via <strong>${meio}</strong>.</p>`;
+        }
+    } else if (tipo === "entrada") {
+        if (parcelas > 0 && entrada) {
+            const valorNum = parseFloat(valor.replace(/\D/g, "").replace(",", ".")) / 100 || 0;
+            const entradaNum = parseFloat(entrada.replace(/\D/g, "").replace(",", ".")) / 100 || 0;
+            const restante = valorNum - entradaNum;
+            const parcelaStr = (restante / parcelas).toFixed(2).replace(".", ",");
+            clausulaValor += `<p>O pagamento deverá ser realizado em entrada de <strong>${entrada}</strong> seguida de <strong>${parcelas} parcelas de R$ ${parcelaStr}</strong>, via <strong>${meio}</strong>. <span style="font-weight: bold; color: #16a34a;">(Total: ${valor})</span></p>`;
+        } else {
+            clausulaValor += `<p>O pagamento deverá ser realizado em entrada seguida de parcelas, via <strong>${meio}</strong>.</p>`;
+        }
+    }
+
+    return clausulaValor;
+}
+
+function gerarClausulaValor(categoria) {
     const valor = document.getElementById("valorServico")?.value || "";
     const tipo = document.getElementById("tipoPagamento")?.value || "";
     const parcelas = parseInt(document.getElementById("numeroParcelas")?.value) || 0;
     const entrada = document.getElementById("valorEntrada")?.value || "";
-    const meio = document.getElementById("meioPagamento")?.value || "a combinar";
+    const meio = document.getElementById("meioPagamento")?.value || "não especificado";
     const dataPrimeira = document.getElementById("dataPrimeiroVencimento")?.value || "";
-    
-    const vNum = parseFloat(valor.replace(/\D/g, "").replace(",", ".")) / 100 || 0;
-    const eNum = parseFloat(entrada.replace(/\D/g, "").replace(",", ".")) / 100 || 0;
-    
+
+    if (!valor) {
+        return `<p>O valor e forma de pagamento serão acordados entre as partes.</p>`;
+    }
+
+    let clausulaValor = `<p>O presente contrato é celebrado em um valor de <strong>${valor}</strong>.</p>`;
+
     if (tipo === "avista") {
-        return `<p>Valor total de <strong>${valor}</strong> pago à vista, via <strong>${meio}</strong>, na data da assinatura deste instrumento.</p>`;
-    }
-    
-    if (tipo === "parcelado") {
-        if (parcelas <= 0) return "<p>A forma de pagamento será definida entre as partes.</p>";
-        const parcStr = (vNum / parcelas).toFixed(2).replace(".", ",");
-        let txt = `<p>O valor total de <strong>${valor}</strong> será pago em <strong>${parcelas} parcelas</strong> fixas de <strong>R$ ${parcStr}</strong> cada, por meio de <strong>${meio}</strong>.</p>`;
-        
-        if (dataPrimeira) {
-            const datasVencimento = calcularDatasParcelas(dataPrimeira, parcelas);
-            txt += "<p>Os vencimentos ocorrerão nas seguintes datas: <br><br>";
-            datasVencimento.forEach((d, i) => {
-                txt += `&nbsp;&nbsp;&nbsp;&nbsp;Parcela ${i + 1}: <strong>R$ ${parcStr}</strong> com vencimento em <strong>${d}</strong>;<br>`;
+        clausulaValor += `<p>O pagamento deverá ser realizado à vista, em uma única parcela, via <strong>${meio}</strong>.</p>`;
+    } else if (tipo === "parcelado") {
+        if (parcelas > 0 && dataPrimeira) {
+            const datas = calcularDatasParcelas(dataPrimeira, parcelas);
+            const valorNum = parseFloat(valor.replace(/\D/g, "").replace(",", ".")) / 100 || 0;
+            const parcelaStr = (valorNum / parcelas).toFixed(2).replace(".", ",");
+            
+            clausulaValor += `<p>O pagamento deverá ser realizado em <strong>${parcelas} parcelas iguais de R$ ${parcelaStr}</strong>, via <strong>${meio}</strong>, conforme cronograma abaixo:</p>`;
+            clausulaValor += `<ul style="margin: 10px 0; padding-left: 20px;">`;
+            
+            datas.forEach((data, index) => {
+                clausulaValor += `<li>Parcela ${index + 1}: ${data} - R$ ${parcelaStr}</li>`;
             });
-            txt += "</p>";
+            
+            clausulaValor += `</ul>`;
+            clausulaValor += `<p><strong>Total: ${valor}</strong></p>`;
+        } else {
+            clausulaValor += `<p>O pagamento deverá ser realizado parcelado, via <strong>${meio}</strong>.</p>`;
         }
-        return txt;
-    }
-    
-    if (tipo === "entrada") {
-        if (parcelas <= 0 || eNum <= 0) return "<p>A forma de pagamento será definida entre as partes.</p>";
-        const rest = vNum - eNum;
-        const parcStr = (rest / parcelas).toFixed(2).replace(".", ",");
-        const remainingFormatted = rest.toFixed(2).replace(".", ",");
-        
-        let txt = `<p>O pagamento será realizado com um sinal de <strong>${entrada}</strong> no ato da assinatura. O saldo remanescente de <strong>R$ ${remainingFormatted}</strong> será quitado em <strong>${parcelas} parcelas</strong> de <strong>R$ ${parcStr}</strong> cada, mediante <strong>${meio}</strong>.</p>`;
-        
-        if (dataPrimeira) {
-            const datasVencimento = calcularDatasParcelas(dataPrimeira, parcelas);
-            txt += "<p>O saldo remanescente vencerá nas seguintes datas: <br><br>";
-            datasVencimento.forEach((d, i) => {
-                txt += `&nbsp;&nbsp;&nbsp;&nbsp;Parcela ${i + 1}: <strong>R$ ${parcStr}</strong> com vencimento em <strong>${d}</strong>;<br>`;
+    } else if (tipo === "entrada") {
+        if (parcelas > 0 && entrada && dataPrimeira) {
+            const valorNum = parseFloat(valor.replace(/\D/g, "").replace(",", ".")) / 100 || 0;
+            const entradaNum = parseFloat(entrada.replace(/\D/g, "").replace(",", ".")) / 100 || 0;
+            const restante = valorNum - entradaNum;
+            const parcelaStr = (restante / parcelas).toFixed(2).replace(".", ",");
+            const datas = calcularDatasParcelas(dataPrimeira, parcelas);
+            
+            clausulaValor += `<p>O pagamento deverá ser realizado em entrada de <strong>${entrada}</strong> seguida de <strong>${parcelas} parcelas de R$ ${parcelaStr}</strong>, via <strong>${meio}</strong>, conforme cronograma abaixo:</p>`;
+            clausulaValor += `<ul style="margin: 10px 0; padding-left: 20px;">`;
+            
+            datas.forEach((data, index) => {
+                clausulaValor += `<li>Parcela ${index + 1}: ${data} - R$ ${parcelaStr}</li>`;
             });
-            txt += "</p>";
+            
+            clausulaValor += `</ul>`;
+            clausulaValor += `<p><strong>Total: ${valor}</strong></p>`;
+        } else {
+            clausulaValor += `<p>O pagamento deverá ser realizado em entrada seguida de parcelas, via <strong>${meio}</strong>.</p>`;
         }
-        return txt;
     }
-    
-    return "<p>A forma de pagamento será definida em termo aditivo entre as partes.</p>";
+
+    return clausulaValor;
 }
 
 function gerarClausulaPrazo(categoria, dataInicio, dataFim) {
@@ -699,35 +883,179 @@ function copiarContrato() {
 }
 
 // ==========================
-// LIMPAR DADOS DO FORMULÁRIO E MEMÓRIA
+// LIMPAR DADOS
 // ==========================
 
 function limparDados() {
-    // Confirmação de segurança para evitar acidentes
     if (!confirm("Tem certeza que deseja apagar todos os dados preenchidos?")) {
         return;
     }
 
-    // 1. Limpa a memória do navegador (LocalStorage)
     localStorage.removeItem('vibecoding_contrato_dados');
 
-    // 2. Esvazia todos os campos visuais (Inputs, Textareas e Selects)
     const campos = document.querySelectorAll('input, textarea, select');
     campos.forEach(campo => {
         campo.value = '';
     });
 
-    // 3. Esconde o contrato gerado e o botão de copiar (se estiverem aparecendo)
     const resultado = document.getElementById("resultado");
     if (resultado) resultado.classList.add("hidden");
     
-    const btnCopiar = document.getElementById("btnCopiar");
-    if (btnCopiar) btnCopiar.style.display = "none";
+    const containerBotoes = document.getElementById("containerBotoesAcao");
+    if (containerBotoes) containerBotoes.style.display = "none";
 
-    // 4. Reseta os blocos visuais para o estado original
     handleMudancaCategoria();
     atualizarResumoPagamento();
     
-    // 5. Rola a página suavemente para o topo
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+// ==========================
+// IMPRIMIR / PDF E WHATSAPP
+// ==========================
+
+function imprimirContrato() {
+    window.print();
+}
+
+function enviarWhatsApp() {
+    const texto = document.getElementById("resultado")?.innerText || "";
+    if (!texto) { 
+        alert("Nada para enviarmos. Gere um contrato primeiro."); 
+        return; 
+    }
+    
+    const ehCelular = /iPhone|iPad|iPod|Android|Mobile|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (ehCelular) {
+        alert(
+            '✅ Preparando para enviar via WhatsApp...\n\n' +
+            '1️⃣ A janela de salvamento será aberta\n' +
+            '2️⃣ Salve o PDF na pasta Downloads do seu celular\n' +
+            '3️⃣ O WhatsApp será aberto\n' +
+            '4️⃣ Selecione um contato ou grupo\n' +
+            '5️⃣ Clique no botão + (anexar)\n' +
+            '6️⃣ Selecione Documentos\n' +
+            '7️⃣ Abra a pasta Downloads\n' +
+            '8️⃣ Procure pelo arquivo Contrato que salvou\n' +
+            '9️⃣ Anexe e envie\n\n' +
+            'Aguarde alguns segundos...'
+        );
+        
+        imprimirContrato();
+        
+        setTimeout(() => {
+            const mensagem = encodeURIComponent(
+                'Olá! Estou enviando o contrato em anexo.\n\n' +
+                'Por favor, revise e me avise se está tudo certo para assinarmos.\n' +
+                'Qualquer dúvida estou à disposição! 👍'
+            );
+            
+            window.location.href = `https://wa.me/?text=${mensagem}`;
+        }, 3000);
+        
+    } else {
+        alert(
+            '✅ Preparando para enviar via WhatsApp...\n\n' +
+            '1️⃣ A janela de salvamento será aberta\n' +
+            '2️⃣ Salve o PDF na pasta Downloads do seu computador\n' +
+            '3️⃣ O WhatsApp Web será aberto\n' +
+            '4️⃣ Clique no botão + (anexar)\n' +
+            '5️⃣ Selecione Documentos\n' +
+            '6️⃣ Abra a pasta Downloads\n' +
+            '7️⃣ Procure pelo arquivo Contrato que salvou\n' +
+            '8️⃣ Clique para anexar e envie\n\n' +
+            'Aguarde alguns segundos...'
+        );
+        
+        imprimirContrato();
+        
+        setTimeout(() => {
+            const mensagem = encodeURIComponent(
+                'Olá! Estou enviando o contrato em anexo.\n\n' +
+                'Por favor, revise e me avise se está tudo certo para assinarmos.\n' +
+                'Qualquer dúvida estou à disposição! 👍'
+            );
+            
+            window.open(`https://wa.me/?text=${mensagem}`, '_blank');
+        }, 3000);
+    }
+}
+
+// --- FUNÇÕES DO TOGGLE SWITCH (CPF/CNPJ) ---
+
+// Alternar Contratante entre CPF e CNPJ
+// --- FUNÇÕES DO TOGGLE SWITCH (CPF/CNPJ) - VERSÃO CORRIGIDA ---
+
+function alternarContratante() {
+    const toggle = document.getElementById('toggleContratante').checked;
+    const labelSpan = document.getElementById('labelContratanteCPF');
+    const inputField = document.getElementById('contratanteCPF');
+    
+    if (toggle) {
+        // Pessoa Jurídica (CNPJ)
+        labelSpan.textContent = 'CNPJ:';
+        inputField.placeholder = '00.000.000/0000-00';
+        inputField.value = '';
+        inputField.dataset.tipo = 'cnpj';
+    } else {
+        // Pessoa Física (CPF)
+        labelSpan.textContent = 'CPF:';
+        inputField.placeholder = '000.000.000-00';
+        inputField.value = '';
+        inputField.dataset.tipo = 'cpf';
+    }
+}
+
+function alternarContratado() {
+    const toggle = document.getElementById('toggleContratado').checked;
+    const labelSpan = document.getElementById('labelContratadoCPF');
+    const inputField = document.getElementById('contratadoCPF');
+    
+    if (toggle) {
+        // Pessoa Jurídica (CNPJ)
+        labelSpan.textContent = 'CNPJ:';
+        inputField.placeholder = '00.000.000/0000-00';
+        inputField.value = '';
+        inputField.dataset.tipo = 'cnpj';
+    } else {
+        // Pessoa Física (CPF)
+        labelSpan.textContent = 'CPF:';
+        inputField.placeholder = '000.000.000-00';
+        inputField.value = '';
+        inputField.dataset.tipo = 'cpf';
+    }
+}
+
+// Função auxiliar para formatar CPF automaticamente enquanto digita
+function formatarCPF(valor) {
+    valor = valor.replace(/\D/g, '');
+    valor = valor.slice(0, 11);
+    
+    if (valor.length > 8) {
+        return valor.slice(0, 3) + '.' + valor.slice(3, 6) + '.' + valor.slice(6, 9) + '-' + valor.slice(9, 11);
+    } else if (valor.length > 5) {
+        return valor.slice(0, 3) + '.' + valor.slice(3, 6) + '.' + valor.slice(6);
+    } else if (valor.length > 2) {
+        return valor.slice(0, 3) + '.' + valor.slice(3);
+    }
+    return valor;
+}
+
+function formatarCNPJ(valor) {
+    valor = valor.replace(/\D/g, '');
+    valor = valor.slice(0, 14);
+    
+    if (valor.length > 11) {
+        return valor.slice(0, 2) + '.' + valor.slice(2, 5) + '.' + valor.slice(5, 8) + '/' + valor.slice(8, 12) + '-' + valor.slice(12, 14);
+    } else if (valor.length > 8) {
+        return valor.slice(0, 2) + '.' + valor.slice(2, 5) + '.' + valor.slice(5, 8) + '/' + valor.slice(8);
+    } else if (valor.length > 5) {
+        return valor.slice(0, 2) + '.' + valor.slice(2, 5) + '.' + valor.slice(5);
+    } else if (valor.length > 2) {
+        return valor.slice(0, 2) + '.' + valor.slice(2);
+    }
+    return valor;
+}
+
+

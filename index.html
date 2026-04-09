@@ -10,8 +10,48 @@
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
 </head>
+
 <body>
-<div class="container">
+<!-- ========================================== -->
+<!-- TELA DE SPLASH (CARREGAMENTO INICIAL)      -->
+<!-- ========================================== -->
+<div id="splash-screen" class="tela-splash">
+    <div class="splash-conteudo">
+        <!-- AQUI ENTRA A SUA NOVA LOGO -->
+        <img src="logo.png" alt="Contrato Fácil Logo" class="logo-imagem-splash">
+            
+        <h1 class="titulo-splash">Contrato Fácil</h1>
+            <p class="subtitulo-splash">Gere contratos em segundos</p>
+        <div class="loader"></div>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- TELA DE LOGIN (ACESSO AO APP)              -->
+<!-- ========================================== -->
+<div id="login-screen" class="tela-login" style="display: none;">
+    <div class="login-box">
+        <!-- AQUI ENTRA A LOGO NA TELA DE LOGIN -->
+        <img src="logo.png" alt="Contrato Fácil Logo" class="logo-imagem-login">
+            
+        <h2>Bem-vindo ao Contrato Fácil</h2>
+        <p>Identifique-se para gerar seus contratos.</p>
+            
+        <div class="grupo-input">
+            <label>Seu Nome Completo</label>
+            <input type="text" id="usuario-nome" placeholder="Ex: João da Silva">
+        </div>
+            
+        <div class="grupo-input">
+            <label>Seu E-mail (Opcional)</label>
+            <input type="email" id="usuario-email" placeholder="Ex: joao@email.com">
+        </div>
+            
+        <button onclick="entrarNoApp()" class="btn-entrar">Começar Agora</button>
+    </div>
+</div>
+    
+<div id="container" class="container">
     <h1>Gerador de Contratos</h1>
 
     <label for="categoria">Tipo de contrato:</label>
@@ -25,11 +65,23 @@
     <div id="dadosPartes">
         <div>
             <h3 id="tituloParte1">Dados do Contratante</h3>
+            
+            <!-- TOGGLE SWITCH PARA ESCOLHER CPF OU CNPJ -->
+            <div class="toggle-container">
+                <span class="toggle-label">Pessoa Física</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggleContratante" onchange="alternarContratante()">
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">Pessoa Jurídica</span>
+            </div>
+
             <label for="contratanteNome">Nome:</label>
             <input type="text" id="contratanteNome" placeholder="Nome completo">
             
-            <label for="contratanteCPF">CPF:</label>
-            <input type="text" id="contratanteCPF" placeholder="000.000.000-00" maxlength="14">
+            <!-- ESTE LABEL VAI MUDAR ENTRE CPF E CNPJ -->
+            <label for="contratanteCPF"><span id="labelContratanteCPF">CPF:</span></label>
+            <input type="text" id="contratanteCPF" placeholder="000.000.000-00">
             
             <label for="contratanteEstadoCivil">Estado civil:</label>
             <input type="text" id="contratanteEstadoCivil" placeholder="Solteiro(a), Casado(a), etc">
@@ -55,11 +107,23 @@
 
         <div>
             <h3 id="tituloParte2">Dados do Contratado</h3>
+            
+            <!-- TOGGLE SWITCH PARA ESCOLHER CPF OU CNPJ -->
+            <div class="toggle-container">
+                <span class="toggle-label">Pessoa Física</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggleContratado" onchange="alternarContratado()">
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">Pessoa Jurídica</span>
+            </div>
+
             <label for="contratadoNome">Nome:</label>
             <input type="text" id="contratadoNome" placeholder="Nome completo">
             
-            <label for="contratadoCPF">CPF:</label>
-            <input type="text" id="contratadoCPF" placeholder="000.000.000-00" maxlength="14">
+            <!-- ESTE LABEL VAI MUDAR ENTRE CPF E CNPJ -->
+            <label for="contratadoCPF"><span id="labelContratadoCPF">CPF:</span></label>
+            <input type="text" id="contratadoCPF" placeholder="000.000.000-00">
             
             <label for="contratadoEstadoCivil">Estado civil:</label>
             <input type="text" id="contratadoEstadoCivil" placeholder="Solteiro(a), Casado(a), etc">
@@ -119,6 +183,10 @@
             
             <label for="dataPrimeiroVencimento" style="margin-top:15px; display:block;">Vencimento da 1ª parcela:</label>
             <input type="date" id="dataPrimeiroVencimento">
+            <div id="resumoParcelasDiv" style="margin-top: 15px; padding: 10px; background-color: #f0f9ff; border-left: 4px solid #0284c7; border-radius: 4px; display: none;">
+                <strong style="display: block; margin-bottom: 8px; color: #0284c7;">Datas das parcelas:</strong>
+                <div id="resumoParcelasDatas" style="font-size: 13px; line-height: 1.6; color: #333;"></div>
+            </div>
         </div>
         
         <!-- Resumo do pagamento -->
@@ -173,8 +241,6 @@
 
     <hr style="margin:20px 0;">
 
-    <hr style="margin:20px 0;">
-
     <h3>Prazo</h3>
 
     <!-- INÍCIO (aparece apenas em Serviço e Aluguel) -->
@@ -187,6 +253,17 @@
     <div id="campoDataFim" style="display:block;">
         <label id="labelDataFim" for="dataFim">Data de término:</label>
         <input type="date" id="dataFim">
+    </div>
+
+
+    <!-- Campo de Cláusulas Adicionais -->
+    <div style="margin: 20px 0;">
+        <label for="clausulasAdicionais" style="display: block; font-weight: bold; margin-bottom: 8px;">Cláusulas Adicionais (opcional)</label>
+        <textarea 
+            id="clausulasAdicionais" 
+            placeholder="Digite aqui qualquer cláusula adicional que deseja incluir no contrato..." 
+            style="width: 100%; height: 120px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-family: Arial; font-size: 14px; resize: vertical;">
+        </textarea>
     </div>
 
     <hr style="margin:20px 0;">
@@ -204,7 +281,11 @@
         </div>
     
     <div id="resultado" class="result hidden"></div>
-    <button onclick="copiarContrato()" style="background:#16a34a; margin-top:10px; display:none;" id="btnCopiar">Copiar Contrato</button>
+        <div id="containerBotoesAcao" style="display:none; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
+        <button onclick="copiarContrato()" style="background:#4b5563; flex: 1; margin-top: 0; font-size: 14px;">📋 Copiar</button>
+        <button onclick="imprimirContrato()" style="background:#0284c7; flex: 1; margin-top: 0; font-size: 14px;">🖨️ Imprimir / PDF</button>
+        <button onclick="enviarWhatsApp()" style="background:#16a34a; flex: 1; margin-top: 0; font-size: 14px;">💬 WhatsApp</button>
+    </div>
 </div>
 
 <script src="app.js"></script>
