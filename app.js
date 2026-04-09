@@ -772,8 +772,6 @@ if (tipoContratado === "cnpj") {
         <br><p><strong>CLÁUSULA QUINTA — DA GARANTIA</strong></p>
         ${gerarClausulaGarantia()}
         ` : ''}
-        
-
 
         ${clausulasAdicionais && clausulasAdicionais.trim() !== "" ? `
         <br><p><strong>CLÁUSULA QUINTA — CLÁUSULAS ADICIONAIS</strong></p>
@@ -976,7 +974,6 @@ function gerarClausulaGarantia() {
 function gerarBlocoFiador() {
     const tipoGarantia = document.getElementById("tipoGarantia")?.value || "";
     
-    // Se não é aluguel com fiador, retorna string vazia
     if (tipoGarantia !== "fiador") {
         return "";
     }
@@ -984,12 +981,10 @@ function gerarBlocoFiador() {
     const nomeFiador = document.getElementById("nomeFiador")?.value || "";
     const cpfFiador = document.getElementById("cpfFiador")?.value || "";
     
-    // Se não tem dados do fiador, retorna vazio
     if (!nomeFiador || !cpfFiador) {
         return "";
     }
     
-    // Retorna apenas o HTML da LINHA do fiador na tabela
     return `
         <tr>
             <td colspan="3" style="height: 30px; border: none; padding: 0;"></td>
@@ -1004,6 +999,10 @@ function gerarBlocoFiador() {
                     CPF: ${cpfFiador}
                 </div>
             </td>
+        </tr>
+        
+        <tr>
+            <td colspan="3" style="height: 80px; border: none; padding: 0;"></td>
         </tr>
     `;
 }

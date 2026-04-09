@@ -326,6 +326,11 @@ PRINT (Imprimir / PDF com margens bonitas e quebra inteligente)
     h1, h3, label, select, input, textarea, hr, button, #dadosPartes, div[id*="Container"], #pagamentoPadrao, #campoDataInicio, #campoDataFim, #containerBotoesAcao {
         display: none !important;
     }
+
+    /* Esconder logo da impressão */
+    .logo-header {
+        display: none !important;
+    }
     
         /* Mostrar exclusivamente o texto do contrato com espaço respirável */
     #resultado {
@@ -339,6 +344,10 @@ PRINT (Imprimir / PDF com margens bonitas e quebra inteligente)
         line-height: 1.6 !important;
         orphans: 3; /* Garante que pelo menos 3 linhas de um parágrafo fiquem na página anterior */
         widows: 3;  /* Garante que pelo menos 3 linhas de um parágrafo fiquem na próxima página */
+    }
+
+    #resultado table {
+        margin-top: 100px !important;
     }
 
     /* Força a quebra de página antes das assinaturas APENAS se necessário */
