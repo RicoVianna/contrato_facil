@@ -590,7 +590,6 @@ function gerarCNPJValido() {
     return cnpj.slice(0, 2).join('') + '.' + cnpj.slice(2, 5).join('') + '.' + cnpj.slice(5, 8).join('') + '/' + cnpj.slice(8, 12).join('') + '-' + cnpj.slice(12, 14).join('');
 }
 
-
 // ==========================
 // PREENCHIMENTO DE TESTE
 // ==========================
@@ -818,9 +817,12 @@ if (tipoContratado === "cnpj") {
                 <td colspan="3" style="height: 60px; border: none; padding: 0;"></td>
             </tr>
             
+            <!-- BLOCO DO FIADOR (SE APLICÁVEL) -->
+            ${gerarBlocoFiador()}
+            
             <tr>
-                <!-- COLUNA ESQUERDA: TESTEMUNHA 1 -->
-                <td style="width: 45%; vertical-align: top; text-align: center; border: none; padding: 0;">
+            <!-- COLUNA ESQUERDA: TESTEMUNHA 1 -->
+            <td style="width: 45%; vertical-align: top; text-align: center; border: none; padding: 0;">
                     <div style="border-bottom: 1px solid #000; width: 100%; margin-bottom: 5px;"></div>
                     <strong>TESTEMUNHA 1</strong>
                     <div style="text-align: left; line-height: 1.5; font-size: 14px; margin-top: 10px;">
@@ -868,45 +870,6 @@ if (tipoContratado === "cnpj") {
     setTimeout(() => {
         window.scrollTo({ top: resultado.offsetTop - 50, behavior: 'smooth' });
     }, 100);
-}
-
-// NOVA FUNÇÃO: Gerar Cláusula de Valor
-function gerarClausulaValor(categoria) {
-    const valor = document.getElementById("valorServico")?.value || "";
-    const tipo = document.getElementById("tipoPagamento")?.value || "";
-    const parcelas = document.getElementById("numeroParcelas")?.value || "";
-    const entrada = document.getElementById("valorEntrada")?.value || "";
-    const meio = document.getElementById("meioPagamento")?.value || "não especificado";
-
-    if (!valor) {
-        return `<p>O valor e forma de pagamento serão acordados entre as partes.</p>`;
-    }
-
-    let clausulaValor = `<p>O presente contrato é celebrado em um valor de <strong>${valor}</strong>.</p>`;
-
-    if (tipo === "avista") {
-        clausulaValor += `<p>O pagamento deverá ser realizado à vista, em uma única parcela, via <strong>${meio}</strong>.</p>`;
-    } else if (tipo === "parcelado") {
-        if (parcelas > 0) {
-            const valorNum = parseFloat(valor.replace(/\D/g, "").replace(",", ".")) / 100 || 0;
-            const parcelaStr = (valorNum / parcelas).toFixed(2).replace(".", ",");
-            clausulaValor += `<p>O pagamento deverá ser realizado em <strong>${parcelas} parcelas iguais de R$ ${parcelaStr}</strong> via <strong>${meio}</strong>. <span style="font-weight: bold; color: #16a34a;">(Total: ${valor})</span></p>`;
-        } else {
-            clausulaValor += `<p>O pagamento deverá ser realizado parcelado, via <strong>${meio}</strong>.</p>`;
-        }
-    } else if (tipo === "entrada") {
-        if (parcelas > 0 && entrada) {
-            const valorNum = parseFloat(valor.replace(/\D/g, "").replace(",", ".")) / 100 || 0;
-            const entradaNum = parseFloat(entrada.replace(/\D/g, "").replace(",", ".")) / 100 || 0;
-            const restante = valorNum - entradaNum;
-            const parcelaStr = (restante / parcelas).toFixed(2).replace(".", ",");
-            clausulaValor += `<p>O pagamento deverá ser realizado em entrada de <strong>${entrada}</strong> seguida de <strong>${parcelas} parcelas de R$ ${parcelaStr}</strong>, via <strong>${meio}</strong>. <span style="font-weight: bold; color: #16a34a;">(Total: ${valor})</span></p>`;
-        } else {
-            clausulaValor += `<p>O pagamento deverá ser realizado em entrada seguida de parcelas, via <strong>${meio}</strong>.</p>`;
-        }
-    }
-
-    return clausulaValor;
 }
 
 function gerarClausulaValor(categoria) {
@@ -1007,6 +970,45 @@ function gerarClausulaGarantia() {
     }
     return `<p>O presente contrato é celebrado desprovido de qualquer modalidade de garantia locatícia (Art. 37 da Lei 8.245/91).</p>`;
 }
+
+// INSERIR APÓS a função gerarClausulaGarantia() (linha ~1100 aproximadamente)
+
+function gerarBlocoFiador() {
+    const tipoGarantia = document.getElementById("tipoGarantia")?.value || "";
+    
+    // Se não é aluguel com fiador, retorna string vazia
+    if (tipoGarantia !== "fiador") {
+        return "";
+    }
+    
+    const nomeFiador = document.getElementById("nomeFiador")?.value || "";
+    const cpfFiador = document.getElementById("cpfFiador")?.value || "";
+    
+    // Se não tem dados do fiador, retorna vazio
+    if (!nomeFiador || !cpfFiador) {
+        return "";
+    }
+    
+    // Retorna apenas o HTML da LINHA do fiador na tabela
+    return `
+        <tr>
+            <td colspan="3" style="height: 30px; border: none; padding: 0;"></td>
+        </tr>
+        
+        <tr>
+            <td colspan="3" style="width: 100%; vertical-align: top; text-align: center; border: none; padding: 0;">
+                <div style="border-bottom: 1px solid #000; width: 100%; margin-bottom: 5px;"></div>
+                <strong>FIADOR</strong>
+                <div style="text-align: center; line-height: 1.5; font-size: 14px; margin-top: 10px;">
+                    <strong>${nomeFiador}</strong><br>
+                    CPF: ${cpfFiador}
+                </div>
+            </td>
+        </tr>
+    `;
+}
+
+
 
 function copiarContrato() {
     const t = document.getElementById("resultado")?.innerText || "";
