@@ -774,15 +774,15 @@ if (tipoContratado === "cnpj") {
         ` : ''}
 
         ${clausulasAdicionais && clausulasAdicionais.trim() !== "" ? `
-        <br><p><strong>CLÁUSULA QUINTA — CLÁUSULAS ADICIONAIS</strong></p>
+        <br><p><strong>${categoria === "aluguel" ? "CLÁUSULA SEXTA" : "CLÁUSULA QUINTA"} — CLÁUSULAS ADICIONAIS</strong></p>
         <p style="text-align: justify; line-height: 1.6;">
             ${clausulasAdicionais.split('\n').join('<br>')}
         </p>
 
-        <br><p><strong>CLÁUSULA SEXTA — DO FORO</strong></p>
+        <br><p><strong>${categoria === "aluguel" ? "CLÁUSULA SÉTIMA" : "CLÁUSULA SEXTA"} — DO FORO</strong></p>
         <p>As partes elegem o foro da <strong>${foro}</strong> para dirimir quaisquer dúvidas ou litígios oriundos deste contrato, renunciando a qualquer outro, por mais privilegiado que seja.</p>
         ` : `
-        <br><p><strong>CLÁUSULA QUINTA — DO FORO</strong></p>
+        <br><p><strong>${categoria === "aluguel" ? "CLÁUSULA SEXTA" : "CLÁUSULA QUINTA"} — DO FORO</strong></p>
         <p>As partes elegem o foro da <strong>${foro}</strong> para dirimir quaisquer dúvidas ou litígios oriundos deste contrato, renunciando a qualquer outro, por mais privilegiado que seja.</p>
         `}
 
@@ -871,18 +871,29 @@ if (tipoContratado === "cnpj") {
 }
 
 function gerarClausulaValor(categoria) {
-    const valor = document.getElementById("valorServico")?.value || "";
-    const tipo = document.getElementById("tipoPagamento")?.value || "";
-    const parcelas = parseInt(document.getElementById("numeroParcelas")?.value) || 0;
-    const entrada = document.getElementById("valorEntrada")?.value || "";
+    const valor = document.getElementById("valorAluguel")?.value || document.getElementById("valorServico")?.value || "";
     const meio = document.getElementById("meioPagamento")?.value || "não especificado";
-    const dataPrimeira = document.getElementById("dataPrimeiroVencimento")?.value || "";
 
     if (!valor) {
         return `<p>O valor e forma de pagamento serão acordados entre as partes.</p>`;
     }
 
+    // ===== LÓGICA PARA ALUGUEL =====
+    if (categoria === "aluguel") {
+        const dataVencimento = document.getElementById("diaVencimento")?.value || "10";
+        return `
+            <p>O aluguel é fixado em <strong>${valor}</strong> (valor mensal), com vencimento no dia <strong>${dataVencimento}</strong> de cada mês, a ser pago via <strong>${meio}</strong>.</p>
+            <p>O reajuste será feito anualmente conforme o IGPM (Índice Geral de Preços do Mercado) ou mediante acordo entre as partes.</p>
+        `;
+    }
+
+    // ===== LÓGICA PARA SERVIÇO / VENDA =====
     let clausulaValor = `<p>O presente contrato é celebrado em um valor de <strong>${valor}</strong>.</p>`;
+    
+    const tipo = document.getElementById("tipoPagamento")?.value || "";
+    const parcelas = parseInt(document.getElementById("numeroParcelas")?.value) || 0;
+    const entrada = document.getElementById("valorEntrada")?.value || "";
+    const dataPrimeira = document.getElementById("dataPrimeiroVencimento")?.value || "";
 
     if (tipo === "avista") {
         clausulaValor += `<p>O pagamento deverá ser realizado à vista, em uma única parcela, via <strong>${meio}</strong>.</p>`;
@@ -969,11 +980,11 @@ function gerarClausulaGarantia() {
     return `<p>O presente contrato é celebrado desprovido de qualquer modalidade de garantia locatícia (Art. 37 da Lei 8.245/91).</p>`;
 }
 
-// INSERIR APÓS a função gerarClausulaGarantia() (linha ~1100 aproximadamente)
 
 function gerarBlocoFiador() {
     const tipoGarantia = document.getElementById("tipoGarantia")?.value || "";
     
+    // Se não é aluguel com fiador, retorna string vazia
     if (tipoGarantia !== "fiador") {
         return "";
     }
@@ -981,10 +992,12 @@ function gerarBlocoFiador() {
     const nomeFiador = document.getElementById("nomeFiador")?.value || "";
     const cpfFiador = document.getElementById("cpfFiador")?.value || "";
     
+    // Se não tem dados do fiador, retorna vazio
     if (!nomeFiador || !cpfFiador) {
         return "";
     }
     
+    // Retorna apenas o HTML da LINHA do fiador na tabela
     return `
         <tr>
             <td colspan="3" style="height: 30px; border: none; padding: 0;"></td>
@@ -1006,6 +1019,10 @@ function gerarBlocoFiador() {
         </tr>
     `;
 }
+
+// INSERIR APÓS a função gerarClausulaGarantia() (linha ~1100 aproximadamente)
+
+
 
 
 
