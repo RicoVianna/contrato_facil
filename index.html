@@ -80,7 +80,7 @@
             
             <!-- ESTE LABEL VAI MUDAR ENTRE CPF E CNPJ -->
             <label for="contratanteCPF"><span id="labelContratanteCPF">CPF:</span></label>
-            <input type="text" id="contratanteCPF" placeholder="000.000.000-00">
+            <input type="text" id="contratanteCPF" inputmode="numeric" placeholder="000.000.000-00">
             
             <div id="containerEstadoCivilContratante">
                 <label for="contratanteEstadoCivil">Estado civil:</label>
@@ -88,13 +88,13 @@
             </div>
             
             <label for="contratanteCEP">CEP:</label>
-            <input type="text" id="contratanteCEP" placeholder="00000-000" maxlength="9">
+            <input type="text" id="contratanteCEP" inputmode="numeric" placeholder="00000-000" maxlength="9">
             
             <label for="contratanteRua">Rua:</label>
             <input type="text" id="contratanteRua" placeholder="Será preenchido automaticamente">
             
             <label for="contratanteNumero">Número:</label>
-            <input type="text" id="contratanteNumero" placeholder="Número">
+            <input type="text" id="contratanteNumero" inputmode="numeric" placeholder="Número">
             
             <label for="contratanteBairro">Bairro:</label>
             <input type="text" id="contratanteBairro" placeholder="Será preenchido automaticamente">
@@ -124,7 +124,7 @@
             
             <!-- ESTE LABEL VAI MUDAR ENTRE CPF E CNPJ -->
             <label for="contratadoCPF"><span id="labelContratadoCPF">CPF:</span></label>
-            <input type="text" id="contratadoCPF" placeholder="000.000.000-00">
+            <input type="text" id="contratadoCPF" inputmode="numeric" placeholder="000.000.000-00">
             
             <div id="containerEstadoCivilContratado">
                 <label for="contratadoEstadoCivil">Estado civil:</label>
@@ -132,13 +132,13 @@
             </div>
             
             <label for="contratadoCEP">CEP:</label>
-            <input type="text" id="contratadoCEP" placeholder="00000-000" maxlength="9">
+            <input type="text" id="contratadoCEP" inputmode="numeric" placeholder="00000-000" maxlength="9">
             
             <label for="contratadoRua">Rua:</label>
             <input type="text" id="contratadoRua" placeholder="Será preenchido automaticamente">
             
             <label for="contratadoNumero">Número:</label>
-            <input type="text" id="contratadoNumero" placeholder="Número">
+            <input type="text" id="contratadoNumero" inputmode="numeric" placeholder="Número">
             
             <label for="contratadoBairro">Bairro:</label>
             <input type="text" id="contratadoBairro" placeholder="Será preenchido automaticamente">
@@ -163,7 +163,7 @@
     <!-- PAGAMENTO PADRÃO (Serviço e Venda) -->
     <div id="pagamentoPadrao">
         <label for="valorServico">Valor do contrato (R$):</label>
-        <input type="text" id="valorServico" placeholder="0,00" maxlength="20">
+        <input type="text" id="valorServico" inputmode="numeric" placeholder="0,00" maxlength="20">
         
         <label for="tipoPagamento">Forma de pagamento:</label>
         <select id="tipoPagamento">
@@ -176,7 +176,7 @@
         <!-- Campo de entrada (oculto por padrão) -->
         <div id="entradaContainer" style="display:none;">
             <label for="valorEntrada">Valor de entrada (R$):</label>
-            <input type="text" id="valorEntrada" placeholder="0,00" maxlength="20">
+            <input type="text" id="valorEntrada" inputmode="numeric" placeholder="0,00" maxlength="20">
         </div>
         
         <!-- Campo de parcelas (oculto por padrão) -->
@@ -209,7 +209,7 @@
     <!-- ALUGUEL -->
     <div id="aluguelContainer" style="display:none;">
         <label for="valorAluguel">Valor do aluguel mensal (R$):</label>
-        <input type="text" id="valorAluguel" placeholder="0,00" maxlength="20">
+        <input type="text" id="valorAluguel" inputmode="numeric" placeholder="0,00" maxlength="20">
         
         <label for="tipoGarantia">Tipo de garantia:</label>
         <select id="tipoGarantia">
@@ -232,7 +232,7 @@
             <input type="text" id="nomeFiador" placeholder="Nome completo">
             
             <label for="cpfFiador">CPF do fiador:</label>
-            <input type="text" id="cpfFiador" placeholder="000.000.000-00" maxlength="14">
+            <input type="text" id="cpfFiador" inputmode="numeric" placeholder="000.000.000-00" maxlength="14">
         </div>
         
         <!-- SEGURO -->
