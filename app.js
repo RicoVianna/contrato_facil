@@ -797,12 +797,15 @@ if (tipoContratado === "cnpj") {
         <p>As partes elegem o foro da <strong>${foro}</strong> para dirimir quaisquer dúvidas ou litígios oriundos deste contrato, renunciando a qualquer outro, por mais privilegiado que seja.</p>
         `}
 
-        <br><br>
-        <p>E, por estarem assim justas e contratadas, as partes assinam o presente instrumento em 02 (duas) vias de igual teor e forma, juntamente com 02 (duas) testemunhas.</p>
+                <br><br>
         
-        <!-- BLOCO DE ASSINATURAS USANDO TABELA (BLINDADO PARA IMPRESSÃO) -->
-        <table style="width: 100%; margin-top: 50px; border-collapse: collapse; page-break-inside: avoid; border: none;">
-            <tr>
+                <!-- INÍCIO DA DIV QUE PROTEGE CONTRA A QUEBRA DE PÁGINA -->
+                <div style="page-break-inside: avoid; break-inside: avoid;">
+                    <p>E, por estarem assim justas e contratadas, as partes assinam o presente instrumento em 02 (duas) vias de igual teor e forma, juntamente com 02 (duas) testemunhas.</p>
+                    
+                    <!-- BLOCO DE ASSINATURAS USANDO TABELA -->
+                    <table style="width: 100%; margin-top: 50px; border-collapse: collapse; border: none;">
+                    <tr>
                 <!-- COLUNA ESQUERDA: CONTRATANTE -->
                 <td style="width: 45%; vertical-align: top; text-align: center; border: none; padding: 0;">
                     <div style="border-bottom: 1px solid #000; width: 100%; margin-bottom: 5px;"></div>

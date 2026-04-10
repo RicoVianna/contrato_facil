@@ -337,7 +337,7 @@ PRINT (Imprimir / PDF com margens bonitas e quebra inteligente)
         display: none !important;
     }
     
-        /* Mostrar exclusivamente o texto do contrato com espaço respirável */
+    /* Mostrar exclusivamente o texto do contrato com espaço respirável */
     #resultado {
         display: block !important;
         border: none !important;
@@ -347,8 +347,8 @@ PRINT (Imprimir / PDF com margens bonitas e quebra inteligente)
         color: black !important;
         font-size: 11pt !important;
         line-height: 1.6 !important;
-        orphans: 3; /* Garante que pelo menos 3 linhas de um parágrafo fiquem na página anterior */
-        widows: 3;  /* Garante que pelo menos 3 linhas de um parágrafo fiquem na próxima página */
+        orphans: 3;
+        widows: 3;
     }
 
     #resultado table {
