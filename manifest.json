@@ -1,14 +1,16 @@
 {
     "name": "Contrato Fácil",
-    "short_name": "Contrato Fácil",
+    "short_name": "Contrato",
     "description": "Gere contratos simples para serviços, vendas e aluguel",
+    "version": "2.0.0",
     "start_url": "./",
     "display": "standalone",
     "background_color": "#f8fafc",
     "theme_color": "#2563eb",
+    "scope": "./",
     "icons": [
         {
-            "src": "icon-512.png",
+            "src": "icon-192.png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose": "any"

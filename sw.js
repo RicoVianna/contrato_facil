@@ -1,8 +1,7 @@
 // ==========================
-// CONFIGURAÇÃO DO CACHE
+// VERSIONAMENTO DO SERVICE WORKER
 // ==========================
-
-const CACHE_NAME = 'facilidoc-cache-v1';
+const CACHE_VERSION = 'contrato-facil-cache-v2'; // ⬅️ MUDEI PARA CONTRATO-FACIL
 const urlsToCache = [
     '/',
     '/index.html',
@@ -17,10 +16,11 @@ const urlsToCache = [
 // Executa quando o Service Worker é instalado pela primeira vez
 
 self.addEventListener('install', event => {
+    console.log('🔧 Service Worker instalando:', CACHE_VERSION);
     event.waitUntil(
-        caches.open(CACHE_NAME)
+        caches.open(CACHE_VERSION)
             .then(cache => {
-                console.log('✅ Cache criado:', CACHE_NAME);
+                console.log('✅ Cache criado:', CACHE_VERSION);
                 return cache.addAll(urlsToCache);
             })
             .catch(error => {
@@ -39,13 +39,14 @@ self.addEventListener('install', event => {
 // Limpa caches antigos
 
 self.addEventListener('activate', event => {
+    console.log('🚀 Service Worker ativando, limpando caches antigos...');
     event.waitUntil(
         caches.keys()
             .then(cacheNames => {
                 return Promise.all(
                     cacheNames.map(cacheName => {
                         // Se o cache não é o atual, deleta
-                        if (cacheName !== CACHE_NAME) {
+                        if (cacheName !== CACHE_VERSION) {
                             console.log('🗑️ Deletando cache antigo:', cacheName);
                             return caches.delete(cacheName);
                         }
@@ -56,6 +57,13 @@ self.addEventListener('activate', event => {
     
     // Force o cliente a usar o novo Service Worker
     self.clients.claim();
+    
+    // Força recarregar todas as abas abertas
+    self.clients.matchAll().then((clients) => {
+        clients.forEach((client) => {
+            client.navigate(client.url);
+        });
+    });
 });
 
 // ==========================
@@ -92,7 +100,7 @@ self.addEventListener('fetch', event => {
                         // Clona a resposta para colocar no cache
                         const responseToCache = response.clone();
                         
-                        caches.open(CACHE_NAME)
+                        caches.open(CACHE_VERSION)
                             .then(cache => {
                                 cache.put(request, responseToCache);
                                 console.log('💾 Adicionado ao cache:', request.url);
