@@ -699,3 +699,133 @@ input:focus + .toggle-slider {
     transform: scale(1);
     }
 }
+
+/* ==========================
+SEÇÃO DOS 3 BOTÕES INFORMATIVOS (RESPONSIVO)
+========================== */
+
+.botoes-info-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin: 30px 0 80px 0;
+    flex-wrap: wrap;
+}
+
+.botao-info {
+    flex: 1;
+    min-width: 120px;
+    height: 50px;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%);
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.botao-info:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+    background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+}
+
+.botao-info:active {
+    transform: scale(0.98);
+}
+
+.botao-icon {
+    font-size: 18px;
+}
+
+.botao-texto {
+    white-space: nowrap;
+}
+
+/* RESPONSIVO: Tablets e acima */
+@media (max-width: 1024px) {
+    .botoes-info-container {
+        gap: 12px;
+        margin: 30px 0 70px 0;
+    }
+
+    .botao-info {
+        height: 48px;
+        font-size: 13px;
+        gap: 6px;
+        background: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%);
+    }
+
+    .botao-icon {
+        font-size: 16px;
+    }
+}
+
+/* RESPONSIVO: Mobile */
+@media (max-width: 768px) {
+    .botoes-info-container {
+        flex-direction: column;
+        gap: 10px;
+        margin: 25px 0 60px 0;
+    }
+
+    .botao-info {
+        width: 100%;
+        height: 45px;
+        font-size: 14px;
+        min-width: unset;
+        background: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%);
+    }
+
+    .botao-icon {
+        font-size: 16px;
+    }
+
+    .botao-texto {
+        white-space: normal;
+    }
+}
+
+/* RESPONSIVO: Celulares pequenos (< 480px) */
+@media (max-width: 480px) {
+    .botoes-info-container {
+        gap: 8px;
+        margin: 20px 0 50px 0;
+    }
+
+    .botao-info {
+        height: 42px;
+        font-size: 12px;
+        padding: 10px 12px;
+        background: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%);
+    }
+
+    .botao-icon {
+        font-size: 14px;
+    }
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+    .botao-info {
+        background: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%);
+        box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+    }
+
+    .botao-info:hover {
+        box-shadow: 0 8px 20px rgba(30, 64, 175, 0.5);
+        background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+    }
+}
+
+/* ==========================
+FIM DA SEÇÃO DOS 3 BOTÕES
+========================== */
