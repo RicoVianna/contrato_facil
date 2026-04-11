@@ -453,11 +453,11 @@ function salvarDadosLocal() {
         clausulasAdicionais: document.getElementById("clausulasAdicionais")?.value || ""
     };
     
-    localStorage.setItem('vibecoding_contrato_dados', JSON.stringify(dados));
+    localStorage.setItem('facilidoc_contrato_dados', JSON.stringify(dados));
 }
 
 function carregarDadosLocal() {
-    const dadosSalvos = localStorage.getItem('vibecoding_contrato_dados');
+    const dadosSalvos = localStorage.getItem('facilidoc_contrato_dados');
     if (!dadosSalvos) return;
     
     try {
@@ -718,6 +718,20 @@ if (tipoContratado === "cnpj") {
     }
 }
 
+// ===== NOVO: VALIDAR CPF DO FIADOR (SOMENTE EM ALUGUEL) =====
+if (categoria === "aluguel") {
+    const tipoGarantia = document.getElementById("tipoGarantia")?.value || "";
+    const cpfFiador = document.getElementById("cpfFiador")?.value || "";
+    
+    if (tipoGarantia === "fiador" && cpfFiador) {
+        if (!validarCPF(cpfFiador)) { 
+            alert("CPF do Fiador é inválido! Verifique a digitação."); 
+            return; 
+        }
+    }
+}
+// ============================================================
+
     const dataInicio = document.getElementById("dataInicio")?.value || "";
     const dataFim = document.getElementById("dataFim")?.value || "";
     
@@ -809,7 +823,7 @@ if (tipoContratado === "cnpj") {
                 <!-- COLUNA ESQUERDA: CONTRATANTE -->
                 <td style="width: 45%; vertical-align: top; text-align: center; border: none; padding: 0;">
                     <div style="border-bottom: 1px solid #000; width: 100%; margin-bottom: 5px;"></div>
-                    <strong>Contratante</strong><br>
+                    <strong>${termo1}</strong><br>
                     <span style="font-size: 14px;">${document.getElementById("nomeContratante")?.value || ""}</span>
                 </td>
                 
@@ -819,7 +833,7 @@ if (tipoContratado === "cnpj") {
                 <!-- COLUNA DIREITA: CONTRATADO -->
                 <td style="width: 45%; vertical-align: top; text-align: center; border: none; padding: 0;">
                     <div style="border-bottom: 1px solid #000; width: 100%; margin-bottom: 5px;"></div>
-                    <strong>Contratado</strong><br>
+                    <strong>${termo2}</strong><br>
                     <span style="font-size: 14px;">${document.getElementById("nomeContratado")?.value || ""}</span>
                 </td>
             </tr>
@@ -1055,7 +1069,7 @@ function limparDados() {
         return;
     }
 
-    localStorage.removeItem('vibecoding_contrato_dados');
+    localStorage.removeItem('facilidoc_contrato_dados');
 
     const campos = document.querySelectorAll('input, textarea, select');
     campos.forEach(campo => {

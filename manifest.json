@@ -2,7 +2,7 @@
     "name": "Contrato Fácil",
     "short_name": "Contrato Fácil",
     "description": "Gere contratos simples para serviços, vendas e aluguel",
-    "start_url": "/contrato_facil/",
+    "start_url": "./",
     "display": "standalone",
     "background_color": "#f8fafc",
     "theme_color": "#2563eb",

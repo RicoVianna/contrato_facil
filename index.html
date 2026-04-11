@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#2563eb">
     <meta name="description" content="Gerador de contratos para serviços, vendas e aluguel. PWA offline-first.">
     
-    <title>Gerador de Contratos - Vibecoding</title>
+    <title>Gerador de Contratos - FacilDoc</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -292,5 +292,19 @@
 </div>
 
 <script src="app.js"></script>
+<script>
+    // Verificar se o usuário já aceitou os termos
+    function verificarTermosAceitos() {
+        const termsAccepted = localStorage.getItem('terms_accepted');
+        
+        if (termsAccepted !== 'true') {
+            // Se não aceitou, redireciona para a página de termos
+            window.location.href = 'responsabilidade-legal.html';
+        }
+    }
+    
+    // Executar a verificação quando a página carrega
+    verificarTermosAceitos();
+</script>
 </body>
 </html>

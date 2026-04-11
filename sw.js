@@ -2,7 +2,7 @@
 // CONFIGURAÇÃO DO CACHE
 // ==========================
 
-const CACHE_NAME = 'vibecoding-v1';
+const CACHE_NAME = 'facilidoc-cache-v1';
 const urlsToCache = [
     '/',
     '/index.html',

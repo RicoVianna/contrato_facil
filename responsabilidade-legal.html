@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibecoding - Termos de Responsabilidade</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .modal-header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .modal-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e0e0e0;
+            background-color: #f5f5f5;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+            text-align: center;
+            min-width: 150px;
+        }
+
+        .tab-button:hover {
+            background-color: #e8e8e8;
+        }
+
+        .tab-button.active {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            margin-bottom: -2px;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .tab-content h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 22px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .tab-content h3 {
+            color: #667eea;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .tab-content p {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            text-align: justify;
+            font-size: 14px;
+        }
+
+        .tab-content ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .tab-content li {
+            color: #555;
+            margin-bottom: 8px;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .modal-footer {
+            padding: 30px;
+            background-color: #f9f9f9;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 250px;
+        }
+
+        #acceptTerms {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .checkbox-container label {
+            color: #555;
+            cursor: pointer;
+            font-size: 14px;
+            user-select: none;
+        }
+
+        .modal-footer button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #acceptBtn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        #acceptBtn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        #acceptBtn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .warning-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            color: #856404;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .info-box {
+            background-color: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            color: #004085;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                max-height: 90vh;
+                margin: 10px;
+            }
+
+            .modal-header h1 {
+                font-size: 22px;
+            }
+
+            .tab-button {
+                font-size: 12px;
+                padding: 10px;
+                min-width: 100px;
+            }
+
+            .tab-content {
+                padding: 20px;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .checkbox-container {
+                flex-basis: 100%;
+            }
+
+            #acceptBtn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h1>⚠️ Aviso Legal Importante</h1>
+            <p>Leia atentamente os termos de responsabilidade antes de usar o FacilDoc</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="abrirAba('responsabilidade')">Responsabilidade</button>
+            <button class="tab-button" onclick="abrirAba('privacidade')">Privacidade (LGPD)</button>
+            <button class="tab-button" onclick="abrirAba('termos')">Termos de Serviço</button>
+        </div>
+
+        <!-- ABA 1: RESPONSABILIDADE -->
+        <div id="responsabilidade" class="tab-content active">
+            <h2>Termo de Responsabilidade Legal</h2>
+
+            <div class="warning-box">
+                <strong>⚠️ AVISO CRÍTICO:</strong> Este aplicativo é uma ferramenta auxiliar para geração de contratos padrão. Ele NÃO substitui a consulta a um profissional de direito qualificado (advogado). Você é o único responsável pelas consequências de usar este aplicativo.
+            </div>
+
+            <h3>1. Sobre o Serviço</h3>
+            <p>O FacilDoc ("Aplicativo") é uma ferramenta de tecnologia que ajuda você a gerar contratos e documentos legais baseados em modelos padrão. O aplicativo funciona APENAS como instrumento de auxílio e conveniência, nunca como substituto para a orientação jurídica profissional.</p>
+
+            <h3>2. Responsabilidade do Usuário</h3>
+            <p>Você é o único responsável por:</p>
+            <ul>
+                <li>Toda a informação que fornece ao aplicativo</li>
+                <li>A precisão, completude e legalidade dos dados inseridos</li>
+                <li>A revisão completa de qualquer contrato antes de assiná-lo</li>
+                <li>Consultar um advogado antes de assinar qualquer documento gerado</li>
+                <li>Entender as implicações jurídicas do que está assinando</li>
+                <li>Compliance com todas as leis aplicáveis em sua jurisdição</li>
+            </ul>
+
+            <h3>3. Limitações de Responsabilidade da Plataforma</h3>
+            <p>Em nenhuma circunstância o FacilDoc será responsável por:</p>
+            <ul>
+                <li>Erros ou omissões nos contratos gerados</li>
+                <li>Inadequação dos contratos para sua situação específica</li>
+                <li>Perdas financeiras ou jurídicas decorrentes do uso do aplicativo</li>
+                <li>Questões de validade, executabilidade ou interpretação legal dos documentos</li>
+                <li>Problemas de impressão, quebra de páginas ou formatação ao imprimir/converter para PDF</li>
+                <li>Qualquer dano direto, indireto, incidental ou consequente</li>
+                <li>Perda de dados ou interrupção do serviço</li>
+            </ul>
+
+            <h3>4. Os Contratos Gerados São Modelos</h3>
+            <p>Os contratos criados pelo FacilDoc são MODELOS GENÉRICOS baseados em padrões contratuais brasileiros. Eles podem não ser adequados para sua situação específica e podem carecer de cláusulas importantes para seu caso particular.</p>
+
+            <h3>5. Aviso sobre Quebra de Página em Impressão</h3>
+            <p>O navegador pode não formatar perfeitamente a quebra de páginas ao imprimir ou converter para PDF, especialmente em contratos longos (com muitas parcelas ou cláusulas adicionais). Isto é uma limitação técnica do navegador, não do aplicativo. <strong>Solução recomendada:</strong> Copie o contrato, cole em um editor de documentos (Word, Google Docs) e imprima de lá, onde você tem controle total da formatação.</p>
+
+            <h3>6. Validação de Dados</h3>
+            <p>Embora o aplicativo realize validações básicas (CPF, CNPJ, CEP), estas são apenas validações de FORMATO, não de EXISTÊNCIA ou PROPRIEDADE. É sua responsabilidade verificar se os dados estão corretos.</p>
+
+            <h3>7. Sem Garantia de Confidencialidade</h3>
+            <p>Qualquer contrato que você gerar neste aplicativo deve ser tratado com CUIDADO. Não envie contratos confidenciais por canais inseguros (WhatsApp, email não criptografado) sem proteção adequada.</p>
+
+            <h3>8. Obrigação de Consultar Advogado</h3>
+            <p><strong>VOCÊ OBRIGA-SE A CONSULTAR UM ADVOGADO ANTES DE ASSINAR QUALQUER CONTRATO GERADO NESTA PLATAFORMA.</strong> Um advogado pode identificar riscos, ajustar cláusulas específicas para sua situação e garantir a conformidade com a lei vigente em sua região.</p>
+        </div>
+
+        <!-- ABA 2: PRIVACIDADE (LGPD) -->
+        <div id="privacidade" class="tab-content">
+            <h2>Política de Privacidade e LGPD</h2>
+
+            <div class="info-box">
+                <strong>ℹ️ Informação Importante:</strong> O FacilDoc armazena TODOS os seus dados APENAS no seu dispositivo (LocalStorage do navegador). Nenhum dado é enviado para nossos servidores.
+            </div>
+
+            <h3>1. Conformidade com LGPD</h3>
+            <p>Esta plataforma está em conformidade com a Lei Geral de Proteção de Dados (Lei 13.709/2018 - LGPD) do Brasil. Nós respeitamos a privacidade dos dados dos usuários e implementamos medidas para protegê-los.</p>
+
+            <h3>2. O Que Coletamos</h3>
+            <p>O FacilDoc coleta APENAS os dados que você voluntariamente fornece ao preencher o formulário de contrato:</p>
+            <ul>
+                <li>Nome, CPF/CNPJ, estado civil</li>
+                <li>Endereço (rua, número, cidade, estado)</li>
+                <li>Dados sobre o contrato (datas, valores, cláusulas)</li>
+                <li>Dados do fiador (se aplicável)</li>
+                <li>Nenhum dado biométrico, cookies de rastreamento ou informação de localização</li>
+            </ul>
+
+            <h3>3. Onde Armazenamos Seus Dados</h3>
+            <p><strong>Todos os seus dados são armazenados APENAS em seu dispositivo</strong>, utilizando o LocalStorage do navegador. Isto significa:</p>
+            <ul>
+                <li>Seus dados NÃO são enviados para nenhum servidor nosso</li>
+                <li>Seus dados NÃO são compartilhados com terceiros</li>
+                <li>Você mantém controle total sobre seus dados</li>
+                <li>Se limpar o cache/dados do navegador, os dados são apagados permanentemente</li>
+            </ul>
+
+            <h3>4. Segurança</h3>
+            <p>Como seus dados ficam localmente em seu dispositivo, eles são tão seguros quanto o próprio dispositivo. Recomendamos:</p>
+            <ul>
+                <li>Use um dispositivo com antivírus atualizado</li>
+                <li>Mantenha o navegador atualizado</li>
+                <li>Não compartilhe seu dispositivo com pessoas não confiáveis</li>
+                <li>Não armazene dados confidenciais em dispositivos compartilhados</li>
+            </ul>
+
+            <h3>5. Service Worker e Modo Offline</h3>
+            <p>O FacilDoc utiliza um "Service Worker" para funcionar offline. Um Service Worker é uma tecnologia que permite ao app funcionar sem internet. Ele:</p>
+            <ul>
+                <li>É armazenado APENAS em seu dispositivo</li>
+                <li>NÃO rastreia sua atividade</li>
+                <li>NÃO envia dados para servidores</li>
+                <li>É utilizado APENAS para funcionalidade offline</li>
+            </ul>
+
+            <h3>6. Seus Direitos Conforme a LGPD</h3>
+            <p>Você tem o direito de:</p>
+            <ul>
+                <li><strong>Acessar:</strong> Visualizar quais dados estão em seu dispositivo (LocalStorage)</li>
+                <li><strong>Corrigir:</strong> Editar dados incorretos antes de usar no contrato</li>
+                <li><strong>Deletar:</strong> Limpar seus dados do navegador a qualquer momento</li>
+                <li><strong>Portabilidade:</strong> Os dados estão em seu dispositivo e você pode exportá-los</li>
+                <li><strong>Não ser rastreado:</strong> O FacilDoc não rastreia você</li>
+            </ul>
+
+            <h3>7. Como Deletar Seus Dados</h3>
+            <p>Para deletar permanentemente todos os seus dados:</p>
+            <ul>
+                <li>Clique em "Limpar Dados" no aplicativo</li>
+                <li>Ou limpe o cache/dados do navegador manualmente</li>
+                <li>Os dados serão apagados imediatamente e permanentemente</li>
+            </ul>
+
+            <h3>8. Contato</h3>
+            <p>Para questões sobre privacidade ou proteção de dados, entre em contato: <strong>seu_email_real@gmail.com</strong></p>
+
+            <h3>9. Alterações na Política</h3>
+            <p>Nos reservamos o direito de atualizar esta política de privacidade. Qualquer alteração será notificada no aplicativo.</p>
+        </div>
+
+        <!-- ABA 3: TERMOS DE SERVIÇO -->
+        <div id="termos" class="tab-content">
+            <h2>Termos de Serviço</h2>
+
+            <h3>1. Definição do Serviço</h3>
+            <p>O FacilDoc é uma plataforma web (PWA) que fornece uma ferramenta de geração de contratos e documentos legais padrão. O serviço é fornecido "COMO ESTÁ", sem garantias adicionais.</p>
+
+            <h3>2. Licença de Uso</h3>
+            <p>Você recebe uma licença pessoal, não transferível e revogável para usar esta plataforma. Você pode usar o FacilDoc para:</p>
+            <ul>
+                <li>Gerar contratos para uso pessoal ou empresarial</li>
+                <li>Imprimir, assinar ou enviar os contratos gerados</li>
+                <li>Usar o aplicativo offline (quando instalado como PWA)</li>
+            </ul>
+
+            <h3>3. Restrições</h3>
+            <p>Você NÃO pode:</p>
+            <ul>
+                <li>Revender, distribuir ou licenciar o FacilDoc</li>
+                <li>Modificar, descompilar ou fazer engenharia reversa do código</li>
+                <li>Usar o aplicativo para fins ilegais ou prejudiciais</li>
+                <li>Criar versões modificadas e distribuir como suas</li>
+                <li>Usar o aplicativo para spam, phishing ou fraude</li>
+            </ul>
+
+            <h3>4. Responsabilidade Legal e Isenções</h3>
+            <p>O FacilDoc é fornecido "TAL QUAL". Nós NÃO garantimos:</p>
+            <ul>
+                <li>Que os contratos serão válidos ou enforceable em sua jurisdição</li>
+                <li>Que os contratos atenderão suas necessidades específicas</li>
+                <li>Que os contratos estão 100% corretos ou completos</li>
+                <li>Disponibilidade ininterrupta do serviço</li>
+                <li>Ausência de bugs ou erros</li>
+            </ul>
+
+            <h3>5. Limitação de Responsabilidade</h3>
+            <p>EM NENHUM CASO, O FacilDoc SERÁ RESPONSÁVEL POR:</p>
+            <ul>
+                <li>Qualquer perda financeira ou jurídica</li>
+                <li>Qualquer dano indireto, incidental ou consequente</li>
+                <li>Custos de consultoria jurídica para corrigir problemas</li>
+                <li>Perda de oportunidades de negócio</li>
+                <li>Qualquer outra consequência do uso do aplicativo</li>
+            </ul>
+
+            <h3>6. Conduta do Usuário</h3>
+            <p>Você concorda em:</p>
+            <ul>
+                <li>Usar o aplicativo apenas para fins legítimos</li>
+                <li>Não usar informações falsas ou fraudulentas</li>
+                <li>Respeitar os direitos de outras pessoas</li>
+                <li>Não sobrecarregar o serviço com requisições excessivas</li>
+            </ul>
+
+            <h3>7. Lei Aplicável</h3>
+            <p>Estes Termos são regidos pelas leis da República Federativa do Brasil. Qualquer disputa será resolvida nos tribunais competentes de São Paulo/SP, Brasil.</p>
+
+            <h3>8. Modificações dos Termos</h3>
+            <p>Nos reservamos o direito de modificar estes termos a qualquer momento. Seu uso contínuo do aplicativo após alterações constitui aceitação dos novos termos.</p>
+
+            <h3>9. Terminação</h3>
+            <p>Podemos terminar ou suspender sua licença se você violar estes Termos. Você pode cessar o uso a qualquer momento simplesmente deixando de usar o aplicativo.</p>
+
+            <h3>10. Integralidade do Acordo</h3>
+            <p>Estes Termos, juntamente com a Política de Privacidade, constituem o acordo completo entre você e o FacilDoc.</p>
+        </div>
+
+        <div class="modal-footer">
+            <div class="checkbox-container">
+                <input type="checkbox" id="acceptTerms" onchange="atualizarBotao()">
+                <label for="acceptTerms">Li e aceito todos os termos, aviso de responsabilidade, política de privacidade e termos de serviço</label>
+            </div>
+            <button id="acceptBtn" onclick="aceitarTermos()" disabled>Aceitar e Continuar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function abrirAba(abaId) {
+        // Esconde todas as abas
+        const abas = document.querySelectorAll('.tab-content');
+        abas.forEach(aba => aba.classList.remove('active'));
+
+        // Remove classe active de todos os botões
+        const botoes = document.querySelectorAll('.tab-button');
+        botoes.forEach(botao => botao.classList.remove('active'));
+
+        // Abre a aba selecionada
+        document.getElementById(abaId).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    function atualizarBotao() {
+        const checkbox = document.getElementById('acceptTerms');
+        const botao = document.getElementById('acceptBtn');
+        botao.disabled = !checkbox.checked;
+    }
+
+    function aceitarTermos() {
+        const checkbox = document.getElementById('acceptTerms');
+        
+        if (!checkbox.checked) {
+            alert('Você precisa aceitar os termos para continuar');
+            return;
+        }
+
+        // Salvar no localStorage que aceitou
+        localStorage.setItem('terms_accepted', 'true');
+        localStorage.setItem('terms_accepted_date', new Date().toISOString());
+
+        // Redirecionar para o app
+        window.location.href = 'index.html';
+    }
+
+    // Verificar se já aceitou (proteção extra)
+    function verificarTermosJaAceitos() {
+        if (localStorage.getItem('terms_accepted') === 'true') {
+            window.location.href = 'index.html';
+        }
+    }
+
+    // Verificar ao carregar a página
+    window.addEventListener('load', verificarTermosJaAceitos);
+</script>
+
+</body>
+</html>
