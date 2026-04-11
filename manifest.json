@@ -1,6 +1,6 @@
 {
     "name": "Contrato Fácil",
-    "short_name": "Contrato",
+    "short_name": "Contrato Fácil",
     "description": "Gere contratos simples para serviços, vendas e aluguel",
     "version": "2.0.0",
     "start_url": "./",
